@@ -7,7 +7,7 @@ public class RecordCSV implements Record{
     private String accessMode;
     private MyData accessDate;
 
-    public RecordCSV(String address, String accessMode, Date accessDate){
+    public RecordCSV(String address, String accessMode, MyData accessDate){
         this.address= address;
         this.accessMode = accessMode;
         this.accessDate = accessDate;
@@ -29,11 +29,11 @@ public class RecordCSV implements Record{
         this.accessMode = accessMode;
     }
 
-    public Date getAccessDate() {
+    public MyData getAccessDate() {
         return accessDate;
     }
 
-    public void setAccessDate(Date accessDate) {
+    public void setAccessDate(MyData accessDate) {
         this.accessDate = accessDate;
     }
 

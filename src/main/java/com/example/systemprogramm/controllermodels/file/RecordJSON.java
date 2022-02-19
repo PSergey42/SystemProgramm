@@ -1,14 +1,18 @@
 package com.example.systemprogramm.controllermodels.file;
 
-
+import java.util.Calendar;
 import java.util.Date;
 
 public class RecordJSON implements Record {
     private String filePath;
     private int kByteSize;
-    private Date dateOfCreate;
+    private Calendar dateOfCreate;
 
-    public RecordJSON(String filePath, int kByteSize, Date dateOfCreate){
+    public RecordJSON(){
+
+    }
+
+    public RecordJSON(String filePath, int kByteSize, Calendar dateOfCreate){
         this.filePath = filePath;
         this.kByteSize = kByteSize;
         this.dateOfCreate = dateOfCreate;
@@ -30,11 +34,11 @@ public class RecordJSON implements Record {
         this.kByteSize = kByteSize;
     }
 
-    public Date getDateOfCreate() {
+    public Calendar getDateOfCreate() {
         return dateOfCreate;
     }
 
-    public void setDateOfCreate(Date dateOfCreate) {
+    public void setDateOfCreate(Calendar dateOfCreate) {
         this.dateOfCreate = dateOfCreate;
     }
 }

@@ -1,13 +1,14 @@
 package com.example.systemprogramm.controllermodels.file;
+import java.util.Calendar;
 
 import java.util.Date;
 
 public class RecordXML implements Record {
     private String filePath;
     private int mByteFileSize;
-    private Date lastEditing;
+    private Calendar lastEditing;
 
-    public RecordXML(String filePath, int mByteFileSize, Date  lastEditing){
+    public RecordXML(String filePath, int mByteFileSize, Calendar  lastEditing){
         this.filePath = filePath;
         this.mByteFileSize = mByteFileSize;
         this.lastEditing = lastEditing;
@@ -29,11 +30,11 @@ public class RecordXML implements Record {
         this.mByteFileSize = mByteFileSize;
     }
 
-    public Date getLastEditing() {
+    public Calendar getLastEditing() {
         return lastEditing;
     }
 
-    public void setLastEditing(Date lastEditing) {
+    public void setLastEditing(Calendar lastEditing) {
         this.lastEditing = lastEditing;
     }
 }
