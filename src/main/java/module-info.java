@@ -1,6 +1,10 @@
 module com.example.systemprogramm {
     requires javafx.controls;
     requires javafx.fxml;
+
+
+    opens com.example.systemprogramm to javafx.fxml;
+    exports com.example.systemprogramm;
     requires java.desktop;
     requires com.google.gson;
     requires java.xml.bind;
