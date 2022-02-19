@@ -44,7 +44,7 @@ public class WindowView extends Application implements View{
 
     @FXML
     void initialize(){
-        instance = this;
+        //instance = this;
     }
 
 }

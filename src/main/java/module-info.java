@@ -3,6 +3,8 @@ module com.example.systemprogramm {
     requires javafx.fxml;
 
 
+    opens com.example.systemprogramm.viewmodels to javafx.fxml;
+    exports com.example.systemprogramm.viewmodels;
     opens com.example.systemprogramm to javafx.fxml;
     exports com.example.systemprogramm;
     requires java.desktop;
