@@ -1,15 +1,11 @@
 package com.example.systemprogramm.controllermodels.file;
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class RecordCSV implements Record{
     private String address;
     private String accessMode;
-    private Date accessDate;
-
-    public RecordCSV(){
-
-    }
+    private MyData accessDate;
 
     public RecordCSV(String address, String accessMode, Date accessDate){
         this.address= address;
@@ -43,6 +39,6 @@ public class RecordCSV implements Record{
 
     @Override
     public String toString() {
-        return '"' + address + "::" + name + "::" + age + "::" + country + "}";
+        return '"' + address + '"' + "," + '"' + accessMode+ '"' + "," + accessDate;
     }
 }
