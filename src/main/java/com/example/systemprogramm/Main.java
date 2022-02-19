@@ -1,15 +1,23 @@
 package com.example.systemprogramm;
 
+import com.example.systemprogramm.controllermodels.ControllerModel;
 import com.example.systemprogramm.controllermodels.file.*;
+import com.example.systemprogramm.controllermodels.file.Record;
 import com.example.systemprogramm.viewmodels.View;
 import com.example.systemprogramm.viewmodels.WindowView;
 
+import javax.xml.bind.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JAXBException {
+
        /* Calendar re = Calendar.getInstance();
         re.set(1,1,1);
         FileUtils f = new FileUtils();
@@ -22,7 +30,8 @@ public class Main {
         f.deleteRecord(new File("test.json"),1 ,FileType.JSON);
         f.setRecord(new File("test.json"),2, new RecordJSON("babulya",1111111, re) , FileType.JSON);*/
 
-        /*View view  = WindowView.getView();
-        view.run();*/
+        View viewer = WindowView.getView();
+        viewer.setController(ControllerModel.getInstance(viewer));
+        viewer.run();
     }
 }
