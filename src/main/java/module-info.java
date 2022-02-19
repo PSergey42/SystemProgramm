@@ -1,6 +1,8 @@
 module com.example.systemprogramm {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
+    requires com.google.gson;
 
 
     opens com.example.systemprogramm.viewmodels to javafx.fxml;
