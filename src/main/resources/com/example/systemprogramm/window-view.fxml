@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="596.0" prefWidth="1226.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
+   <children>
+      <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="630.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Аналазитор">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ToggleButton mnemonicParsing="false" text="Вариант 1" />
+                        <ToggleButton layoutX="89.0" mnemonicParsing="false" text="Вариант 2" />
+                        <ToggleButton layoutX="178.0" mnemonicParsing="false" text="Вариант 3" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Работа с файлом">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="595.0" prefWidth="630.0">
+                     <children>
+                        <ToggleButton mnemonicParsing="false" text="Вариант 1" />
+                        <ToggleButton layoutX="89.0" mnemonicParsing="false" text="Вариант 2" />
+                        <ToggleButton layoutX="178.0" mnemonicParsing="false" text="Вариант 3" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Низкоуровневая функция">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ToggleButton mnemonicParsing="false" text="Вариант1" />
+                        <ToggleButton layoutX="85.0" mnemonicParsing="false" text="Вариант 2" />
+                        <ToggleButton layoutX="174.0" mnemonicParsing="false" text="Вариант 3" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <ListView layoutX="630.0" layoutY="43.0" prefHeight="551.0" prefWidth="542.0" />
+      <Label layoutX="636.0" layoutY="14.0" text="Лог" />
+   </children>
+</Pane>
