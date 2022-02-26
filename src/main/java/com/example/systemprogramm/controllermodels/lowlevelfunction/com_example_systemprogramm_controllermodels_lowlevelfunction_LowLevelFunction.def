@@ -1,3 +1,0 @@
-;mydll.def
-LIBRARY LowLevelFunction
-EXPORTS Java_com_example_systemprogramm_controllermodels_lowlevelfunction_LowLevelFunction_div
