@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="596.0" prefWidth="1176.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
+   <children>
+      <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Аналазитор">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ToggleButton mnemonicParsing="false" text="Вариант 1" />
+                        <ToggleButton layoutX="89.0" mnemonicParsing="false" text="Вариант 2" />
+                        <ToggleButton layoutX="178.0" mnemonicParsing="false" text="Вариант 3" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Работа с файлом">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="595.0" prefWidth="630.0">
+                     <children>
+                        <ToggleButton fx:id="buttonFileVariantOne" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="Вариант 1" />
+                        <ToggleButton fx:id="buttonFileVariantTwo" layoutX="89.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="Вариант 2" />
+                        <ToggleButton fx:id="buttonFileVariantThree" layoutX="178.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="Вариант 3" />
+                        <Label fx:id="labelFileVariant" layoutX="600.0" layoutY="77.0" text="Label" />
+                        <TableView fx:id="tableReocrds" editable="true" layoutY="77.0" prefHeight="474.0" prefWidth="600.0">
+                          <columns>
+                            <TableColumn fx:id="fileColumn1" maxWidth="200.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="200.0" sortable="false" text="Путь к файлу" />
+                            <TableColumn fx:id="fileColumn2" maxWidth="200.0" minWidth="150.0" onEditCommit="#editRecord" prefWidth="150.0" sortable="false" text="Размер файла, КБ" />
+                              <TableColumn fx:id="fileColumn3" maxWidth="250.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="250.0" sortable="false" text="Дата создания" />
+                          </columns>
+                        </TableView>
+                        <MenuButton layoutY="46.0" mnemonicParsing="false" text="Файл">
+                          <items>
+                              <MenuItem mnemonicParsing="false" onAction="#createNewFile" text="Новый файл" />
+                              <MenuItem mnemonicParsing="false" onAction="#addRecord" text="Добавить запись" />
+                            <MenuItem mnemonicParsing="false" onAction="#openFile" text="Открыть" />
+                            <MenuItem mnemonicParsing="false" onAction="#saveFileAs" text="Сохранить как" />
+                          </items>
+                        </MenuButton>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Низкоуровневая функция">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ToggleButton mnemonicParsing="false" text="Вариант1" />
+                        <ToggleButton layoutX="85.0" mnemonicParsing="false" text="Вариант 2" />
+                        <ToggleButton layoutX="174.0" mnemonicParsing="false" text="Вариант 3" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <ListView layoutX="753.0" layoutY="35.0" prefHeight="551.0" prefWidth="322.0" />
+      <Label layoutX="902.0" layoutY="14.0" text="Лог" />
+   </children>
+</Pane>
