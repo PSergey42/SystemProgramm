@@ -102,10 +102,8 @@ public class WindowView extends Application implements View {
     @FXML
     void initialize() {
         instance = this;
-        //buttonFileVariantOne.setSelected(true);
-        fileMenuButton.getItems().get(0).setVisible(false);
+        fileMenuButton.setDisable(true);
         fileMenuButton.getItems().get(1).setVisible(false);
-        fileMenuButton.getItems().get(2).setVisible(false);
         fileMenuButton.getItems().get(3).setVisible(false);
         fileMenuButton.getItems().get(4).setVisible(false);
         ContextMenu cm = new ContextMenu();
@@ -183,9 +181,8 @@ public class WindowView extends Application implements View {
                             "Для добавления новой записи необходимо указать файл на компьютере.");
                 }
             }
-            fileMenuButton.getItems().get(0).setVisible(true);
+            fileMenuButton.setDisable(false);
             fileMenuButton.getItems().get(1).setVisible(false);
-            fileMenuButton.getItems().get(2).setVisible(true);
             fileMenuButton.getItems().get(3).setVisible(false);
             fileMenuButton.getItems().get(4).setVisible(false);
         }
