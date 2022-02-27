@@ -1,26 +1,7 @@
 [
   {
-    "filePath": "a",
-    "kByteSize": 228,
-    "dateOfCreate": {
-      "year": 1,
-      "month": 1,
-      "dayOfMonth": 1,
-      "hourOfDay": 22,
-      "minute": 13,
-      "second": 6
-    }
-  },
-  {
-    "filePath": "babulya",
-    "kByteSize": 1111111,
-    "dateOfCreate": {
-      "year": 1,
-      "month": 1,
-      "dayOfMonth": 1,
-      "hourOfDay": 22,
-      "minute": 14,
-      "second": 9
-    }
+    "filePath": "D:\\Учеба\\6_семестр\\Беспроводные сети Wi-fI\\Лаба1_Поляков_С_В_6304.docx",
+    "kByteSize": 1670,
+    "dateOfCreate": "дек. 24, 2022"
   }
 ]

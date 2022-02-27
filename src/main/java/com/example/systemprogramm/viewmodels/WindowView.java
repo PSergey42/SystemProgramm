@@ -3,7 +3,6 @@ package com.example.systemprogramm.viewmodels;
 import com.example.systemprogramm.controllermodels.Controller;
 import com.example.systemprogramm.controllermodels.analyzer.AnalyzeException;
 import com.example.systemprogramm.controllermodels.file.FileType;
-import com.example.systemprogramm.controllermodels.file.MyDate;
 import com.example.systemprogramm.controllermodels.file.record.*;
 import com.example.systemprogramm.controllermodels.file.record.Record;
 import com.example.systemprogramm.controllermodels.lowlevelfunction.LowLevelFunction;
@@ -31,7 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.sql.Date;
 
 public class WindowView extends Application implements View {
     private static Controller controller;

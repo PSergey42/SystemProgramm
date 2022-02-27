@@ -1,7 +1,7 @@
 package com.example.systemprogramm.viewmodels.windows;
 
 import com.example.systemprogramm.controllermodels.Controller;
-import com.example.systemprogramm.controllermodels.file.MyDate;
+import com.example.systemprogramm.controllermodels.file.record.Record;
 import com.example.systemprogramm.controllermodels.file.record.RecordCSV;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,6 +44,7 @@ public class AddRecordWindow extends Window {
 
     public void start(Stage primaryStage) {
         primaryStage.initModality(Modality.APPLICATION_MODAL);
+        primaryStage.setResizable(false);
         primaryStage.showAndWait();
     }
 
@@ -55,17 +56,27 @@ public class AddRecordWindow extends Window {
     }
 
     @FXML
-    private void addRecord(ActionEvent event) throws ParseException {
-        if (!textFieldAddress.getText().isEmpty() && !textFieldDateAccess.getText().isEmpty()) {
-            controller.addRecord(new RecordCSV(textFieldAddress.getText(),
-                    comboBoxAccess.getValue(),
-                    MyDate.parse(textFieldDateAccess.getText()))
-            );
-
-            ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
-        } else {
-
+    private void addRecord(ActionEvent event) {
+        try {
+            if (!textFieldAddress.getText().isEmpty() && !textFieldDateAccess.getText().isEmpty()) {
+                controller.addRecord(new RecordCSV(textFieldAddress.getText(),
+                        comboBoxAccess.getValue(),
+                        Record.parse(textFieldDateAccess.getText()))
+                );
+                printLog("Запись " + controller.getRecords().get(controller.getRecords().size() - 1) + " успешно добавлена");
+                ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
+            } else{
+                AlertWindow.showAlert("Некоторые поля пустые!");
+            }
+        } catch (RuntimeException e){
+            printLog("Error: " + e.getMessage());
+            AlertWindow.showAlert(e.getMessage());
         }
     }
 
+    private void printLog(String message) {
+        Date date = new Date(Calendar.getInstance().getTimeInMillis());
+        SimpleDateFormat currentDate = new SimpleDateFormat("'['hh:mm:ss']: '");
+        logArea.appendText(currentDate.format(date) + message + "\n");
+    }
 }

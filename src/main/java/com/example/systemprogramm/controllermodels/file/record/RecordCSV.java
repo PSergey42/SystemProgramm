@@ -1,7 +1,7 @@
 package com.example.systemprogramm.controllermodels.file.record;
 
-import com.example.systemprogramm.controllermodels.file.MyDate;
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table (name = "mycsv")

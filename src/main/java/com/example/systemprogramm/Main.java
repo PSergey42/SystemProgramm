@@ -1,21 +1,15 @@
 package com.example.systemprogramm;
 
 import com.example.systemprogramm.controllermodels.ControllerModel;
-import com.example.systemprogramm.controllermodels.analyzer.Analyzer;
-import com.example.systemprogramm.controllermodels.file.MyDate;
-import com.example.systemprogramm.controllermodels.file.record.RecordModel;
-import com.example.systemprogramm.controllermodels.file.record.Record;
-import com.example.systemprogramm.controllermodels.file.record.RecordXML;
+import com.example.systemprogramm.controllermodels.database.DAO;
+import com.example.systemprogramm.controllermodels.file.FileType;
+import com.example.systemprogramm.controllermodels.file.record.RecordJSON;
 import com.example.systemprogramm.viewmodels.View;
 import com.example.systemprogramm.viewmodels.WindowView;
 
 import javax.xml.bind.*;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.sql.Date;
 
 public class Main {
 
@@ -32,8 +26,8 @@ public class Main {
         }
 
 
-       /* View viewer = WindowView.getView();
+        View viewer = WindowView.getView();
         viewer.setController(ControllerModel.getInstance(viewer));
-        viewer.run();*/
+        viewer.run();
     }
 }

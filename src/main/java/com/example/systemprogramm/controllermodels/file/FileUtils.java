@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Date;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.example.systemprogramm.controllermodels.file.record.*;
@@ -94,9 +95,9 @@ public class FileUtils implements MyFile {
                     CSVReader csvReader = new CSVReader(new FileReader(loadFile), ',');
                     String[] records;
                     while ((records = csvReader.readNext()) != null) {
-                        MyDate myDate = new MyDate(Integer.parseInt(records[2].substring(0, records[2].indexOf("."))),
-                                Integer.parseInt(records[2].substring(records[2].indexOf(".") + 1, records[2].lastIndexOf("."))),
-                                Integer.parseInt(records[2].substring(records[2].lastIndexOf(".") + 1)));
+                        Date myDate = new Date(Integer.parseInt(records[2].substring(0,records[2].indexOf("-"))) - 1900,
+                                Integer.parseInt(records[2].substring(records[2].indexOf("-") + 1, records[2].lastIndexOf("-"))) - 1,
+                                Integer.parseInt(records[2].substring(records[2].lastIndexOf("-")+1)));
                         Record record = new RecordCSV(records[0], records[1], myDate);
                         recordList.add(record);
                     }

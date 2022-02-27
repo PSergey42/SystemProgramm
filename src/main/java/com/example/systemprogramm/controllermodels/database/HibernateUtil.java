@@ -29,7 +29,6 @@ public final class HibernateUtil {
                 System.out.println("Исключение!" + e);
             }
         }
-        System.out.println(sessionFactory == null);
         return sessionFactory;
     }
 }

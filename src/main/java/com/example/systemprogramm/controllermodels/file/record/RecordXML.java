@@ -1,7 +1,5 @@
 package com.example.systemprogramm.controllermodels.file.record;
 
-import com.example.systemprogramm.controllermodels.file.MyDate;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

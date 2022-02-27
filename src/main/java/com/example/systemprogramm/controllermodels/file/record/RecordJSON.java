@@ -1,11 +1,7 @@
 package com.example.systemprogramm.controllermodels.file.record;
 
-import com.example.systemprogramm.controllermodels.file.MyDate;
-import com.example.systemprogramm.controllermodels.file.record.Record;
-
 import javax.persistence.*;
-import java.util.Calendar;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Table(name = "json")
@@ -16,15 +12,13 @@ public class RecordJSON implements Record {
     @Column(name = "k_byte_size")
     private int kByteSize;
     @Column(name = "mydate")
-    private Date hi;
-    @Transient
-    private MyDate dateOfCreate;
+    private Date dateOfCreate;
 
     public RecordJSON() {
 
     }
 
-    public RecordJSON(String filePath, int kByteSize, MyDate dateOfCreate){
+    public RecordJSON(String filePath, int kByteSize, Date dateOfCreate) {
         this.filePath = filePath;
         this.kByteSize = kByteSize;
         this.dateOfCreate = dateOfCreate;
@@ -46,11 +40,11 @@ public class RecordJSON implements Record {
         this.kByteSize = kByteSize;
     }
 
-    public MyDate getDateOfCreate() {
+    public Date getDateOfCreate() {
         return dateOfCreate;
     }
 
-    public void setDateOfCreate(MyDate dateOfCreate) {
+    public void setDateOfCreate(Date dateOfCreate) {
         this.dateOfCreate = dateOfCreate;
     }
 
