@@ -228,14 +228,14 @@ public class WindowView extends Application implements View {
                 }
             } else if (fileColumn3 == cellEditEvent.getTableColumn()) {
                 switch (whichVariantSelected()) {
-                    case JSON -> ((RecordJSON) record).setDateOfCreate(MyDate.parse(data));
-                    case CSV -> ((RecordCSV) record).setAccessDate(MyDate.parse(data));
-                    case XML -> ((RecordXML) record).setLastEditing(MyDate.parse(data));
+                    case JSON -> ((RecordJSON) record).setDateOfCreate(Record.parse(data));
+                    case CSV -> ((RecordCSV) record).setAccessDate(Record.parse(data));
+                    case XML -> ((RecordXML) record).setLastEditing(Record.parse(data));
                 }
             }
             controller.editRecord(record, cellEditEvent.getTablePosition().getRow());
             printLog("Запись " + oldValue + " успешно изменена на " + record);
-        } catch (ParseException | AnalyzeException | CloneNotSupportedException e) {
+        } catch (RuntimeException e) {
             printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
@@ -256,11 +256,12 @@ public class WindowView extends Application implements View {
                     calendar.setTimeInMillis(attribute.creationTime().toMillis());
                     controller.addRecord(new RecordJSON(file.getPath(),
                             (int) file.length() / 1000,
-                            new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR)))
+                            new Date(calendar.getTimeInMillis()))
                     );
+                    printLog("Запись " + controller.getRecords().get(controller.getRecords().size() - 1) + " успешно добавлена");
                     break;
                 case CSV:
-                    AddRecordWindow arw = new AddRecordWindow(controller);
+                    AddRecordWindow arw = new AddRecordWindow(controller, logArea);
                     arw.start(newWindow("add-record-window.fxml", "Добавить запись"));
                     break;
                 case XML:
@@ -270,10 +271,10 @@ public class WindowView extends Application implements View {
                     calendar.setTimeInMillis(file.lastModified());
                     controller.addRecord(new RecordXML(file.getPath(),
                             (double) file.length() / 1000000,
-                            new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
+                            new Date(calendar.getTimeInMillis())));
+                    printLog("Запись " + controller.getRecords().get(controller.getRecords().size() - 1) + " успешно добавлена");
                     break;
             }
-            printLog("Запись " + controller.getRecords().get(controller.getRecords().size() - 1) + " успешно добавлена");
             update();
         } catch (Exception e) {
             printLog("Error: " + e.getMessage());
@@ -367,18 +368,29 @@ public class WindowView extends Application implements View {
     @FXML
     private void createNewFile() {
         try {
-            File file;
             switch (whichVariantSelected()) {
                 case JSON -> {
-                    currentFile = file = new File("test.json");
+                    currentFile = new File("test.json");
+                    if (currentFile.exists()) {
+                        currentFile.delete();
+                        currentFile.createNewFile();
+                    }
                     controller.load(currentFile, FileType.JSON);
                 }
                 case CSV -> {
-                    currentFile = File.createTempFile("temp", ".csv");
+                    currentFile = new File("test1.csv");
+                    if (currentFile.exists()) {
+                        currentFile.delete();
+                        currentFile.createNewFile();
+                    }
                     controller.load(currentFile, FileType.CSV);
                 }
                 case XML -> {
-                    currentFile = File.createTempFile("temp", ".xml");
+                    currentFile = new File("test2.xml");
+                    if (currentFile.exists()) {
+                        currentFile.delete();
+                        currentFile.createNewFile();
+                    }
                     controller.load(currentFile, FileType.XML);
                 }
             }
@@ -472,7 +484,7 @@ public class WindowView extends Application implements View {
     }
 
     private void printLog(String message) {
-        Date date = new Date();
+        Date date = new Date(Calendar.getInstance().getTimeInMillis());
         SimpleDateFormat currentDate = new SimpleDateFormat("'['hh:mm:ss']: '");
         logArea.appendText(currentDate.format(date) + message + "\n");
     }

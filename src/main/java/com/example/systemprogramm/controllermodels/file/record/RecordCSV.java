@@ -12,12 +12,12 @@ public class RecordCSV implements Record {
     @Column(name = "accessmode")
     private String accessMode;
     @Column(name = "mydate")
-    private MyDate accessDate;
+    private Date accessDate;
 
     public RecordCSV(){
     }
 
-    public RecordCSV(String address, String accessMode, MyDate accessDate){
+    public RecordCSV(String address, String accessMode, Date accessDate){
         this.address= address;
         this.accessMode = accessMode;
         this.accessDate = accessDate;
@@ -39,11 +39,11 @@ public class RecordCSV implements Record {
         this.accessMode = accessMode;
     }
 
-    public MyDate getAccessDate() {
+    public Date getAccessDate() {
         return accessDate;
     }
 
-    public void setAccessDate(MyDate accessDate) {
+    public void setAccessDate(Date accessDate) {
         this.accessDate = accessDate;
     }
 
@@ -53,7 +53,7 @@ public class RecordCSV implements Record {
     }
 
     @Override
-    public Record clone() throws CloneNotSupportedException {
-        return new RecordCSV(this.address, this.accessMode, this.accessDate.clone());
+    public Record clone() {
+        return new RecordCSV(this.address, this.accessMode, (Date) this.accessDate.clone());
     }
 }

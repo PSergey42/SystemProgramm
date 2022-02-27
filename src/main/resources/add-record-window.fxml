@@ -9,7 +9,7 @@
 <AnchorPane prefHeight="147.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.windows.AddRecordWindow">
    <children>
       <TextField fx:id="textFieldAddress" layoutX="14.0" layoutY="41.0" prefHeight="31.0" prefWidth="149.0" />
-      <TextField fx:id="textFieldDateAccess" layoutX="419.0" layoutY="41.0" prefHeight="31.0" prefWidth="149.0" promptText="дд.мм.гг" />
+      <TextField fx:id="textFieldDateAccess" layoutX="419.0" layoutY="41.0" prefHeight="31.0" prefWidth="149.0" promptText="гг-мм-дд" />
       <Text layoutX="29.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите адрес ресурса" />
       <Text layoutX="220.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите режим доступа" />
       <Text layoutX="428.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите дату доступа" />

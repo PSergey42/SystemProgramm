@@ -3,8 +3,13 @@ module com.example.systemprogramm {
     requires javafx.fxml;
     requires java.desktop;
     requires com.google.gson;
-    requires java.xml.bind;
     requires opencsv;
+    requires java.naming;
+    requires java.xml.bind;
+    requires org.hibernate.orm.core;
+    requires java.sql;
+    requires java.persistence;
+
 
     opens com.example.systemprogramm.viewmodels;
     exports com.example.systemprogramm.viewmodels;

@@ -3,7 +3,6 @@ package com.example.systemprogramm.controllermodels;
 import com.example.systemprogramm.controllermodels.file.FileType;
 import com.example.systemprogramm.controllermodels.file.record.Record;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.util.List;
 

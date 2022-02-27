@@ -20,7 +20,7 @@ public class RecordJSON implements Record {
     @Transient
     private MyDate dateOfCreate;
 
-    public RecordJSON(){
+    public RecordJSON() {
 
     }
 
@@ -55,12 +55,12 @@ public class RecordJSON implements Record {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("filePath = %s, kByteSize = %s, dateOfCreate = %s", filePath, kByteSize, dateOfCreate);
     }
 
     @Override
-    public Record clone() throws CloneNotSupportedException {
-        return new RecordJSON(this.filePath, this.kByteSize, this.dateOfCreate.clone());
+    public Record clone() {
+        return new RecordJSON(this.filePath, this.kByteSize, (Date) this.dateOfCreate.clone());
     }
 }

@@ -10,7 +10,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Date;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @Entity
 @Table(name = "xml")
@@ -23,12 +27,12 @@ public class RecordXML implements Record {
     @Column(name = "m_byte_file_path")
     private double mByteFileSize;
     @Column(name = "mydate")
-    private MyDate lastEditing;
+    private Date lastEditing;
 
     public RecordXML() {
     }
 
-    public RecordXML(String filePath, double mByteFileSize, MyDate lastEditing) {
+    public RecordXML(String filePath, double mByteFileSize, Date lastEditing) {
         this.filePath = filePath;
         this.mByteFileSize = mByteFileSize;
         this.lastEditing = lastEditing;
@@ -52,11 +56,13 @@ public class RecordXML implements Record {
         this.mByteFileSize = mByteFileSize;
     }
 
-    public MyDate getLastEditing() {
+    @XmlAttribute
+    @XmlJavaTypeAdapter(DateAdapter.class)
+    public Date getLastEditing() {
         return lastEditing;
     }
 
-    public void setLastEditing(MyDate lastEditing) {
+    public void setLastEditing(Date lastEditing) {
         this.lastEditing = lastEditing;
     }
 
@@ -66,7 +72,21 @@ public class RecordXML implements Record {
     }
 
     @Override
-    public Record clone() throws CloneNotSupportedException {
-        return new RecordXML(this.filePath, this.mByteFileSize, this.lastEditing.clone());
+    public Record clone() {
+        return new RecordXML(this.filePath, this.mByteFileSize, (Date) this.lastEditing.clone());
+    }
+
+    static class DateAdapter extends XmlAdapter<String, Date>{
+        private static final String CUSTOM_FORMAT_STRING = "yyyy-MM-dd";
+
+        @Override
+        public String marshal(Date v) {
+            return new SimpleDateFormat(CUSTOM_FORMAT_STRING).format(v);
+        }
+
+        @Override
+        public Date unmarshal(String v) throws ParseException {
+            return new Date(new SimpleDateFormat(CUSTOM_FORMAT_STRING).parse(v).getTime());
+        }
     }
 }

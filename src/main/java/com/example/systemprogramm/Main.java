@@ -26,7 +26,8 @@ public class Main {
             //System.out.println(Analyzer.analyze2("int s =14;double ifa = 2.2; int a = s; bool af3 = true; if(true){ } else { s++;}"));
 
         }
-        catch (Exception e){
+        catch (Throwable e){
+           // e.printStackTrace();
             System.err.println(e.getMessage());
         }
 

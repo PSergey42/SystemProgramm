@@ -7,16 +7,24 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.w3c.dom.Text;
 
+import java.sql.Date;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.StringTokenizer;
 
 public class AddRecordWindow extends Window {
 
     private static Controller controller;
+    private static TextArea logArea;
+
     @FXML
     private TextField textFieldAddress;
 
@@ -29,8 +37,9 @@ public class AddRecordWindow extends Window {
     public AddRecordWindow() {
     }
 
-    public AddRecordWindow(Controller controller) {
+    public AddRecordWindow(Controller controller, TextArea logArea) {
         AddRecordWindow.controller = controller;
+        AddRecordWindow.logArea = logArea;
     }
 
     public void start(Stage primaryStage) {
@@ -39,7 +48,7 @@ public class AddRecordWindow extends Window {
     }
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         comboBoxAccess.setValue("Свободный");
         comboBoxAccess.getItems().add("Свободный");
         comboBoxAccess.getItems().add("Закрытый");

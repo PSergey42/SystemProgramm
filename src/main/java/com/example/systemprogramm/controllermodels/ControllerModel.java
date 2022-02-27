@@ -4,21 +4,14 @@ import com.example.systemprogramm.controllermodels.analyzer.Analyzer;
 import com.example.systemprogramm.controllermodels.file.FileType;
 import com.example.systemprogramm.controllermodels.file.FileUtils;
 import com.example.systemprogramm.controllermodels.file.record.Record;
-import com.example.systemprogramm.controllermodels.file.record.RecordModel;
-import com.example.systemprogramm.controllermodels.lowlevelfunction.LowLevelFunction;
 import com.example.systemprogramm.viewmodels.View;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.List;
 
 public class ControllerModel implements Controller {
     private FileUtils fileUtils;
     private Analyzer analyzer;
-    //private LowLevelFunction lowLevelFunction;
     private View view;
     private static ControllerModel instance;
 
