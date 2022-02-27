@@ -94,6 +94,7 @@ public class WindowView extends Application implements View {
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource("window-view.fxml"));
         stage.setTitle("Системное программирование");
+        stage.setResizable(false);
         stage.setScene(new Scene(fxmlLoader.load()));
         stage.show();
     }

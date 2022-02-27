@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1070.0" prefHeight="596.0" prefWidth="1070.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
+<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1070.0" prefHeight="596.0" prefWidth="1070.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
    <children>
       <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="755.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -56,8 +56,8 @@
                         <TableView fx:id="tableReocrds" editable="true" layoutX="8.0" layoutY="57.0" prefHeight="490.0" prefWidth="600.0">
                           <columns>
                             <TableColumn fx:id="fileColumn1" maxWidth="200.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="200.0" sortable="false" text="Путь к файлу" />
-                            <TableColumn fx:id="fileColumn2" maxWidth="200.0" minWidth="150.0" onEditCommit="#editRecord" prefWidth="150.0" sortable="false" text="Размер файла, КБ" />
-                              <TableColumn fx:id="fileColumn3" maxWidth="250.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="250.0" sortable="false" text="Дата создания" />
+                            <TableColumn fx:id="fileColumn2" maxWidth="150.0" minWidth="150.0" onEditCommit="#editRecord" prefWidth="150.0" sortable="false" text="Размер файла, КБ" />
+                              <TableColumn fx:id="fileColumn3" maxWidth="250.0" minWidth="250.0" onEditCommit="#editRecord" prefWidth="250.0" sortable="false" text="Дата создания" />
                           </columns>
                         </TableView>
                         <MenuButton fx:id="fileMenuButton" layoutX="8.0" layoutY="16.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Файл">
