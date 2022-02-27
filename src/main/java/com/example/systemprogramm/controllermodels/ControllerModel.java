@@ -1,7 +1,11 @@
 package com.example.systemprogramm.controllermodels;
 
+import com.example.systemprogramm.controllermodels.analyzer.Analyzer;
+import com.example.systemprogramm.controllermodels.file.FileType;
+import com.example.systemprogramm.controllermodels.file.FileUtils;
 import com.example.systemprogramm.controllermodels.file.record.Record;
 import com.example.systemprogramm.controllermodels.file.record.RecordModel;
+import com.example.systemprogramm.controllermodels.lowlevelfunction.LowLevelFunction;
 import com.example.systemprogramm.viewmodels.View;
 
 import javax.xml.bind.JAXBContext;
@@ -12,7 +16,9 @@ import java.io.File;
 import java.util.List;
 
 public class ControllerModel implements Controller {
-    private RecordModel recordModel;
+    private FileUtils fileUtils;
+    private Analyzer analyzer;
+    //private LowLevelFunction lowLevelFunction;
     private View view;
     private static ControllerModel instance;
 
@@ -22,7 +28,8 @@ public class ControllerModel implements Controller {
     public static ControllerModel getInstance(View view) {
         if (instance != null) return instance;
         instance = new ControllerModel();
-        instance.recordModel = new RecordModel();
+        instance.fileUtils = new FileUtils();
+        instance.analyzer = new Analyzer();
         instance.view = view;
         view.setController(instance);
         return instance;
@@ -33,48 +40,37 @@ public class ControllerModel implements Controller {
     }
 
     public void addRecord(Record record){
-        recordModel.addRecord(record);
+        fileUtils.addRecord(record);
     }
 
     public void deleteRecord(int index){
-        recordModel.deleteRecord(index);
+        fileUtils.deleteRecord(index);
     }
 
     public void editRecord(Record newRecord, int index){
-        recordModel.setRecord(newRecord, index);
+        fileUtils.setRecord(newRecord, index);
     }
 
     @Override
     public List<Record> getRecords() {
-        return recordModel.getRecords();
+        return fileUtils.getRecords();
     }
 
-    public void saveJSONAs(File saveFile) {
-
+    @Override
+    public void save(File saveFile, FileType fileType) {
+        fileUtils.save(saveFile, fileType);
     }
 
-    public void saveCSVAs(File saveFile) {
-
+    @Override
+    public void load(File loadFile, FileType fileType) {
+        fileUtils.load(loadFile, fileType);
     }
 
-    public void saveXMLAs(File saveFile) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RecordModel.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(recordModel, saveFile);
+    @Override
+    public String analyzeIf(String s){
+        return Analyzer.analyze2(s);
     }
-
-    public void loadJSON(File loadFile) {
-
-    }
-
-    public void loadCSV(File loadFile) {
-
-    }
-
-    public void loadXML(File loadFile) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(RecordModel.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        recordModel = (RecordModel) unmarshaller.unmarshal(loadFile);
+    public boolean analyzeWhile(String s){
+        return Analyzer.analyze(s);
     }
 }

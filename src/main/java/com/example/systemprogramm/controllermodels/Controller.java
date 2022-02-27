@@ -1,5 +1,6 @@
 package com.example.systemprogramm.controllermodels;
 
+import com.example.systemprogramm.controllermodels.file.FileType;
 import com.example.systemprogramm.controllermodels.file.record.Record;
 
 import javax.xml.bind.JAXBException;
@@ -11,10 +12,8 @@ public interface Controller {
     void deleteRecord(int index);
     void editRecord(Record newRecord, int index);
     List<Record> getRecords();
-    void saveJSONAs(File saveFile) throws JAXBException;
-    void saveCSVAs(File saveFile) throws JAXBException;
-    void saveXMLAs(File saveFile) throws JAXBException;
-    void loadJSON(File loadFile) throws JAXBException;
-    void loadCSV(File loadFile) throws JAXBException;
-    void loadXML(File loadFile) throws JAXBException;
+    void save(File saveFile, FileType fileType);
+    void load(File loadFile, FileType fileType);
+    String analyzeIf(String s);
+    boolean analyzeWhile(String s);
 }

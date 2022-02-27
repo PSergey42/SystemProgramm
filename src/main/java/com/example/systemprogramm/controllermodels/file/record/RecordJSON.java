@@ -1,5 +1,6 @@
 package com.example.systemprogramm.controllermodels.file.record;
 
+import com.example.systemprogramm.controllermodels.file.MyDate;
 import com.example.systemprogramm.controllermodels.file.record.Record;
 
 import java.util.Calendar;
@@ -7,13 +8,13 @@ import java.util.Calendar;
 public class RecordJSON implements Record {
     private String filePath;
     private int kByteSize;
-    private Calendar dateOfCreate;
+    private MyDate dateOfCreate;
 
     public RecordJSON(){
 
     }
 
-    public RecordJSON(String filePath, int kByteSize, Calendar dateOfCreate){
+    public RecordJSON(String filePath, int kByteSize, MyDate dateOfCreate){
         this.filePath = filePath;
         this.kByteSize = kByteSize;
         this.dateOfCreate = dateOfCreate;
@@ -35,11 +36,11 @@ public class RecordJSON implements Record {
         this.kByteSize = kByteSize;
     }
 
-    public Calendar getDateOfCreate() {
+    public MyDate getDateOfCreate() {
         return dateOfCreate;
     }
 
-    public void setDateOfCreate(Calendar dateOfCreate) {
+    public void setDateOfCreate(MyDate dateOfCreate) {
         this.dateOfCreate = dateOfCreate;
     }
 }

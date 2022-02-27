@@ -8,15 +8,15 @@ import java.util.List;
 public class RecordModel {
     private List<Record> records;
 
-    public RecordModel(){
+    public RecordModel() {
         records = new ArrayList<>();
     }
 
-    @XmlElements(value = {
-            @XmlElement(name = "record", type = RecordXML.class, namespace = "XML"),
-            @XmlElement(name = "record", type = RecordCSV.class, namespace = "CSV"),
-            @XmlElement(name = "record", type = RecordJSON.class, namespace = "JSON")
-    })
+    public RecordModel(List<Record> recordList) {
+        records = recordList;
+    }
+
+    @XmlElement(name = "record", type = RecordXML.class, namespace = "XML")
     public List<Record> getRecords() {
         return records;
     }
@@ -25,21 +25,19 @@ public class RecordModel {
         this.records = records;
     }
 
-    public void addRecord(Record record){
+    public void addRecord(Record record) {
         records.add(record);
     }
 
-    public void deleteRecord(int index){
+    public void deleteRecord(int index) {
         records.remove(index);
     }
 
-    public Record getRecord(int index){
+    public Record getRecord(int index) {
         return records.get(index);
     }
 
-    public void setRecord(Record newRecord, int index){
+    public void setRecord(Record newRecord, int index) {
         records.set(index, newRecord);
     }
-
-
 }

@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.util.List;
 
 public interface MyFile {
-    List<Record> getRecord(File myFileName, FileType type) throws IOException;
-    void setRecord(File myFileName, int recordPos, Record newRecord, FileType type);
-    void addRecord(File myFileName, FileType type, Record ... newRecord);
-    void deleteRecord(File myFileName, int recordPos, FileType type);
+    Record getRecord(int recordPos);
+    List<Record> getRecords();
+    void setRecord(Record newRecord, int recordPos);
+    void addRecord(Record... newRecord);
+    void deleteRecord(int recordPos);
+    void save(File saveFile, FileType fileType);
+    void load(File loadFile, FileType fileType);
 }

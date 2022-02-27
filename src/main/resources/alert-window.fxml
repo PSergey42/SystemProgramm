@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="115.0" prefWidth="392.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.windows.AlertWindow">
+   <children>
+      <Label fx:id="label" layoutX="14.0" layoutY="14.0" text="Label" />
+      <Button layoutX="279.0" layoutY="70.0" mnemonicParsing="false" onAction="#clickOk" prefHeight="37.0" prefWidth="62.0" text="ОК">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+      <ImageView fx:id="image" fitHeight="60.0" fitWidth="60.0" layoutX="310.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</AnchorPane>

@@ -1,9 +1,6 @@
 package com.example.systemprogramm.controllermodels.analyzer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Analyzer {
 
@@ -31,6 +28,8 @@ public class Analyzer {
 
         } catch (Exception e) {
             throw new MyException(e.getMessage());
+        } finally {
+            clearMaps();
         }
     }
 
@@ -76,6 +75,9 @@ public class Analyzer {
 
         } catch (Exception e) {
             throw new MyException(e.getMessage());
+        }
+        finally {
+            clearMaps();
         }
     }
 
@@ -371,12 +373,19 @@ public class Analyzer {
         String[] error = {"string", "bool", "int", "double", "true", "false", "if", "for", "while", "else"};
         String[] error2 = {"+", "-", ")", "(", "*", "&", "^", "%", "$", "#", "@", "!", ":", "?", "~", "="};
         for (int i = 0; i < error.length; i++) {
-            if (name == error[i]) return true;
+            if (Objects.equals(name, error[i])) return true;
         }
         for (int i = 0; i < error2.length; i++) {
             if (name.contains(error2[i])) return true;
         }
         return false;
+    }
+
+    private static void clearMaps(){
+        intMap.clear();
+        booleanMap.clear();
+        stringMap.clear();
+        doubleMap.clear();
     }
 
     public static void toStringMap() {

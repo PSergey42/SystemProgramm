@@ -3,158 +3,130 @@ package com.example.systemprogramm.controllermodels.file;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.bean.CsvToBean;
+import com.example.systemprogramm.controllermodels.file.record.*;
 import com.example.systemprogramm.controllermodels.file.record.Record;
-import com.example.systemprogramm.controllermodels.file.record.RecordCSV;
-import com.example.systemprogramm.controllermodels.file.record.RecordJSON;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
 public class FileUtils implements MyFile {
 
+    private RecordModel recordModel;
     private final Type itemsListType = new TypeToken<List<RecordJSON>>() {}.getType();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    @Override
-    public ArrayList<Record> getRecord(File myFileName, FileType type) throws IOException {
-        ArrayList<Record> recordList = new ArrayList<>();
-        BufferedReader br = new BufferedReader(new FileReader(myFileName));
-        String line;
-        switch (type) {
-            case CSV: {
-                CSVReader csvReader = new CSVReader(new FileReader(myFileName), ',');
-                String[] records;
-                while((records = csvReader.readNext()) != null){
-                    MyData myData = new MyData(Integer.parseInt(records[2].substring(0, records[2].indexOf("."))),
-                            Integer.parseInt(records[2].substring(records[2].indexOf(".")+1, records[2].lastIndexOf("."))),
-                            Integer.parseInt(records[2].substring(records[2].lastIndexOf(".") + 1)));
-                    Record record = new RecordCSV(records[0], records[1], myData);
-                    recordList.add(record);
-                }
-
-                return recordList;
-            }
-            case JSON: {
-                StringBuilder b = new StringBuilder();
-                while ((line = br.readLine()) != null) {
-                    b.append(line);
-                }
-                recordList = gson.fromJson(b.toString().trim(), itemsListType);
-                return recordList;
-            }
-            case XML: {
-                //Vs
-                break;
-            }
-        }
-        return recordList;
+    public FileUtils(){
+        recordModel = new RecordModel();
     }
 
     @Override
-    public void setRecord(File myFileName, int recordPos, Record newRecord, FileType type) {
+    public Record getRecord(int recordPos) {
+        return recordModel.getRecord(recordPos);
+    }
+
+    @Override
+    public List<Record> getRecords() {
+        return recordModel.getRecords();
+    }
+
+    @Override
+    public void setRecord(Record newRecord, int recordPos) {
+        recordModel.setRecord(newRecord, recordPos);
+    }
+
+    @Override
+    public void addRecord(Record... newRecord) {
+        for (Record record : newRecord) {
+            recordModel.addRecord(record);
+        }
+    }
+
+    @Override
+    public void deleteRecord(int recordPos) {
+        recordModel.deleteRecord(recordPos);
+    }
+
+    @Override
+    public void save(File saveFile, FileType fileType){
         try {
-            ArrayList<Record> record = getRecord(myFileName, type);
-            switch (type) {
-                case CSV: {
-                    FileWriter fileWriter = new FileWriter(myFileName);
+            switch (fileType) {
+                case CSV -> {
+                    List<Record> record = recordModel.getRecords();
+                    FileWriter fileWriter = new FileWriter(saveFile);
                     PrintWriter printWriter = new PrintWriter(fileWriter);
-                    if(record == null) record = new ArrayList<>();
-                    record.set(recordPos-1, newRecord);
-                    for(int i = 0; i < record.size(); i++){
+                    if (record == null) record = new ArrayList<>();
+                    for (int i = 0; i < record.size(); i++) {
                         printWriter.println(record.get(i));
                     }
                     printWriter.close();
-                    break;
                 }
-                case JSON: {
-                    record.set(recordPos-1,newRecord);
-                    PrintWriter printWriter = new PrintWriter(myFileName);
+                case JSON -> {
+                    List<Record> record = recordModel.getRecords();
+                    PrintWriter printWriter = new PrintWriter(saveFile);
                     printWriter.println(gson.toJson(record));
                     printWriter.close();
-                    break;
                 }
-                case XML: {
-                    //Vs
-                    break;
+                case XML -> {
+                    JAXBContext jaxbContext = JAXBContext.newInstance(RecordModel.class);
+                    Marshaller marshaller = jaxbContext.createMarshaller();
+                    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                    marshaller.marshal(recordModel, saveFile);
                 }
             }
 
-        } catch (IOException e) {
+        } catch (IOException | JAXBException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void addRecord(File myFileName, FileType type, Record... newRecord) {
-        try {
-            switch (type) {
-                case CSV: {
-                    FileWriter fileWriter = new FileWriter(myFileName, true);
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
-                    ArrayList<Record> record = getRecord(myFileName, type);
-                    if(record == null) record = new ArrayList<>();
-                    Collections.addAll(record, newRecord);
-                    for(int i = 0; i < newRecord.length; i++){
-                        printWriter.println(newRecord[i]);
+    public void load(File loadFile, FileType fileType) {
+        try (BufferedReader br = new BufferedReader(new FileReader(loadFile))) {
+            List<Record> recordList = new ArrayList<>();
+            switch (fileType) {
+                case CSV -> {
+                    CSVReader csvReader = new CSVReader(new FileReader(loadFile), ',');
+                    String[] records;
+                    while ((records = csvReader.readNext()) != null) {
+                        MyDate myDate = new MyDate(Integer.parseInt(records[2].substring(0, records[2].indexOf("."))),
+                                Integer.parseInt(records[2].substring(records[2].indexOf(".") + 1, records[2].lastIndexOf("."))),
+                                Integer.parseInt(records[2].substring(records[2].lastIndexOf(".") + 1)));
+                        Record record = new RecordCSV(records[0], records[1], myDate);
+                        recordList.add(record);
                     }
-                    printWriter.close();
-                    break;
+                    recordModel.setRecords(recordList);
                 }
-                case JSON: {
-                    ArrayList<Record> record = getRecord(myFileName, type);
-                    PrintWriter printWriter = new PrintWriter(myFileName);
-                    if(record == null) record = new ArrayList<>();
-                    Collections.addAll(record, newRecord);
-                    printWriter.println(gson.toJson(record));
-                    printWriter.close();
-                    break;
+                case JSON -> {
+                    String line;
+                    StringBuilder b = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        b.append(line);
+                    }
+                    recordList = gson.fromJson(b.toString().trim(), itemsListType);
+                    if(recordList == null) recordList = new ArrayList<>();
+                    recordModel.setRecords(recordList);
                 }
-                case XML: {
-                    //Vs
-                    break;
+                case XML -> {
+                    if(loadFile.length() == 0){
+                        PrintWriter pw = new PrintWriter(loadFile);
+                        pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+                        pw.println("<records xmlns:ns2=\"XML\">");
+                        pw.println("</records>");
+                        pw.close();
+                    }
+                    JAXBContext jaxbContext = JAXBContext.newInstance(RecordModel.class);
+                    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+                    recordModel = (RecordModel) unmarshaller.unmarshal(loadFile);
                 }
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void deleteRecord(File myFileName, int recordPos, FileType type) {
-        try {
-            switch (type) {
-                case CSV: {
-                    ArrayList<Record> record = getRecord(myFileName, type);
-                    FileWriter fileWriter = new FileWriter(myFileName);
-                    PrintWriter printWriter = new PrintWriter(fileWriter);
-                    if(record == null) record = new ArrayList<>();
-                    record.remove(recordPos-1);
-                    for(int i = 0; i < record.size(); i++){
-                        printWriter.println(record.get(i));
-                    }
-                    printWriter.close();
-                    break;
-                }
-                case JSON: {
-                    ArrayList<Record> record = getRecord(myFileName, type);
-                    record.remove(recordPos-1);
-                    PrintWriter printWriter = new PrintWriter(myFileName);
-                    printWriter.println(gson.toJson(record));
-                    printWriter.close();
-                    break;
-                }
-                case XML: {
-                    //Vs
-                    break;
-                }
-            }
-
-        } catch (IOException e) {
+        } catch (IOException | JAXBException e) {
             e.printStackTrace();
         }
     }

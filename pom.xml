@@ -120,10 +120,6 @@
                 <configuration>
                     <source>14</source>
                     <target>14</target>
-                    <source>16</source>
-                    <target>16</target>
-                    <source>14</source>
-                    <target>14</target>
                 </configuration>
             </plugin>
             <plugin>

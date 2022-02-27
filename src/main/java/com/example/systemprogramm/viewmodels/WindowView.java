@@ -1,8 +1,14 @@
 package com.example.systemprogramm.viewmodels;
 
 import com.example.systemprogramm.controllermodels.Controller;
-import com.example.systemprogramm.controllermodels.file.Record;
-import com.example.systemprogramm.controllermodels.file.*;
+import com.example.systemprogramm.controllermodels.analyzer.MyException;
+import com.example.systemprogramm.controllermodels.file.FileType;
+import com.example.systemprogramm.controllermodels.file.MyDate;
+import com.example.systemprogramm.controllermodels.file.record.*;
+import com.example.systemprogramm.controllermodels.file.record.Record;
+import com.example.systemprogramm.controllermodels.lowlevelfunction.LowLevelFunction;
+import com.example.systemprogramm.viewmodels.windows.AddRecordWindow;
+import com.example.systemprogramm.viewmodels.windows.AlertWindow;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -18,13 +24,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.util.Date;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
+import java.util.Calendar;
 
 public class WindowView extends Application implements View {
     private static Controller controller;
     private static WindowView instance;
+    private File currentFile = null;
 
     @FXML
     public TableView<Record> tableReocrds;
@@ -37,11 +47,26 @@ public class WindowView extends Application implements View {
     @FXML
     private TableColumn<Record, String> fileColumn3;
     @FXML
-    private ToggleButton buttonFileVariantOne;
+    private ToggleButton buttonFileJSON;
     @FXML
-    private ToggleButton buttonFileVariantTwo;
+    private ToggleButton buttonFileCSV;
     @FXML
-    private ToggleButton buttonFileVariantThree;
+    private ToggleButton buttonFileXML;
+    @FXML
+    private MenuButton fileMenuButton;
+    @FXML
+    private TextArea textAreaAnalyzer;
+    @FXML
+    private Label resultLabel;
+    @FXML
+    private SplitMenuButton actionLowLevelFunction;
+    @FXML
+    private TextField textFieldFirstValue;
+    @FXML
+    private TextField textFieldSecondValue;
+    @FXML
+    private Label resultLowLevelFunction;
+
 
     @Override
     public void run() {
@@ -62,11 +87,7 @@ public class WindowView extends Application implements View {
     }
 
     public static View getView() {
-        if (instance == null) {
-            return (instance = new WindowView());
-        } else {
-            return instance;
-        }
+        return instance == null ? instance = new WindowView() : instance;
     }
 
     @Override
@@ -80,7 +101,12 @@ public class WindowView extends Application implements View {
     @FXML
     void initialize() {
         instance = this;
-        buttonFileVariantOne.setSelected(true);
+        //buttonFileVariantOne.setSelected(true);
+        fileMenuButton.getItems().get(0).setVisible(false);
+        fileMenuButton.getItems().get(1).setVisible(false);
+        fileMenuButton.getItems().get(2).setVisible(false);
+        fileMenuButton.getItems().get(3).setVisible(false);
+        fileMenuButton.getItems().get(4).setVisible(false);
         ContextMenu cm = new ContextMenu();
         MenuItem deleteRecords = new MenuItem("Удалить запись");
         cm.getItems().add(deleteRecords);
@@ -97,8 +123,10 @@ public class WindowView extends Application implements View {
         deleteRecords.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                controller.deleteRecord(tableReocrds.getSelectionModel().getSelectedIndex());
-                update();
+                if (tableReocrds.getSelectionModel().getSelectedIndex() > -1) {
+                    controller.deleteRecord(tableReocrds.getSelectionModel().getSelectedIndex());
+                    update();
+                }
             }
         });
         fileColumn1.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -111,158 +139,270 @@ public class WindowView extends Application implements View {
         if (mouseEvent.getButton() == MouseButton.PRIMARY) {
             tableReocrds.getItems().clear();
             switch (((ToggleButton) mouseEvent.getSource()).getText()) {
-                case "Вариант 1":
+                case "JSON" -> {
                     fileColumn1.setText("Путь к файлу");
                     fileColumn2.setText("Размер файла, КБайт");
                     fileColumn3.setText("Дата создания файла");
                     fileColumn1.setCellValueFactory(new PropertyValueFactory<>("filePath"));
-                    fileColumn2.setCellValueFactory(p -> new SimpleStringProperty(((RecordJSON) p.getValue()).getKByteSize() + ""));
-                    fileColumn3.setCellValueFactory(p -> new SimpleStringProperty(((RecordJSON) p.getValue()).getDateOfCreate() + ""));
-
-                    buttonFileVariantOne.setSelected(true);
-                    buttonFileVariantTwo.setSelected(false);
-                    buttonFileVariantThree.setSelected(false);
-                    break;
-                case "Вариант 2":
+                    fileColumn2.setCellValueFactory(p -> new SimpleStringProperty(Integer.toString(((RecordJSON) p.getValue()).getKByteSize())));
+                    fileColumn3.setCellValueFactory(p -> new SimpleStringProperty(((RecordJSON) p.getValue()).getDateOfCreate().toString()));
+                    buttonFileJSON.setSelected(true);
+                    buttonFileCSV.setSelected(false);
+                    buttonFileXML.setSelected(false);
+                    labelFileVariant.setText("Формат файла: JSON.\n\nВводимые данные:\n" +
+                            "Запись о файле:\nпуть к файлу, размер файла в килобайтах, дата создания файла.\n\n" +
+                            "Для добавления новой записи необходимо указать файл на компьютере.");
+                }
+                case "CSV" -> {
                     fileColumn1.setText("Адрес");
                     fileColumn2.setText("Режим доступа");
                     fileColumn3.setText("Дата доступа");
                     fileColumn1.setCellValueFactory(new PropertyValueFactory<>("address"));
                     fileColumn2.setCellValueFactory(new PropertyValueFactory<>("accessMode"));
-                    fileColumn3.setCellValueFactory(new PropertyValueFactory<>("accessDate"));
-                    buttonFileVariantOne.setSelected(false);
-                    buttonFileVariantTwo.setSelected(true);
-                    buttonFileVariantThree.setSelected(false);
-                    break;
-                case "Вариант 3":
+                    fileColumn3.setCellValueFactory(p -> new SimpleStringProperty(((RecordCSV) p.getValue()).getAccessDate().toString()));
+                    buttonFileJSON.setSelected(false);
+                    buttonFileCSV.setSelected(true);
+                    buttonFileXML.setSelected(false);
+                    labelFileVariant.setText("Формат файла: CSV.\n\nВводимые данные:\n" +
+                            "Запись о ресурсе:\nадрес ресурса в сети Интернет, режим доступа(свободный, закрытый), дата доступа\n\n" +
+                            "Для добавления новой записи вывести окно ввода.");
+                }
+                case "XML" -> {
                     fileColumn1.setText("Путь к файлу");
                     fileColumn2.setText("Размер файла, МБайт");
                     fileColumn3.setText("Дата последнего редактирования");
                     fileColumn1.setCellValueFactory(p -> new SimpleStringProperty(((RecordXML) p.getValue()).getFilePath()));
                     fileColumn2.setCellValueFactory(p -> new SimpleStringProperty(Double.toString(((RecordXML) p.getValue()).getMByteFileSize())));
-                    fileColumn3.setCellValueFactory(p -> new SimpleStringProperty(((RecordXML) p.getValue()).getLastEditing() + ""));
-                    buttonFileVariantOne.setSelected(false);
-                    buttonFileVariantTwo.setSelected(false);
-                    buttonFileVariantThree.setSelected(true);
-                    break;
+                    fileColumn3.setCellValueFactory(p -> new SimpleStringProperty(((RecordXML) p.getValue()).getLastEditing().toString()));
+                    buttonFileJSON.setSelected(false);
+                    buttonFileCSV.setSelected(false);
+                    buttonFileXML.setSelected(true);
+                    labelFileVariant.setText("Формат файла: JSON.\n\nВводимые данные:\n" +
+                            "Запись о файле:\nпуть к файлу, размер файла в мегабайтах, дата последнего редактирования файла.\n\n" +
+                            "Для добавления новой записи необходимо указать файл на компьютере.");
+                }
             }
+            fileMenuButton.getItems().get(0).setVisible(true);
+            fileMenuButton.getItems().get(1).setVisible(false);
+            fileMenuButton.getItems().get(2).setVisible(true);
+            fileMenuButton.getItems().get(3).setVisible(false);
+            fileMenuButton.getItems().get(4).setVisible(false);
         }
     }
 
     @FXML
-    private void editRecord(TableColumn.CellEditEvent<Record, String> cellEditEvent) {
+    private void editRecord(TableColumn.CellEditEvent<Record, String> cellEditEvent) throws ParseException {
         String data = cellEditEvent.getNewValue();
         Record record = cellEditEvent.getRowValue();
         if (fileColumn1 == cellEditEvent.getTableColumn()) {
             switch (whichVariantSelected()) {
-                case 1 -> ((RecordJSON) record).setFilePath(data);
-                case 2 -> ((RecordCSV) record).setAddress(data);
-                case 3 -> ((RecordXML) record).setFilePath(data);
+                case JSON -> ((RecordJSON) record).setFilePath(data);
+                case CSV -> ((RecordCSV) record).setAddress(data);
+                case XML -> ((RecordXML) record).setFilePath(data);
             }
         } else if (fileColumn2 == cellEditEvent.getTableColumn()) {
 
             switch (whichVariantSelected()) {
-                case 1 -> ((RecordJSON) record).setKByteSize(Integer.parseInt(data));
-                case 2 -> ((RecordCSV) record).setAccessMode(data);
-                case 3 -> ((RecordXML) record).setMByteFileSize(Double.parseDouble(data));
+                case JSON -> ((RecordJSON) record).setKByteSize(Integer.parseInt(data));
+                case CSV -> ((RecordCSV) record).setAccessMode(data);
+                case XML -> ((RecordXML) record).setMByteFileSize(Double.parseDouble(data));
             }
         } else if (fileColumn3 == cellEditEvent.getTableColumn()) {
             switch (whichVariantSelected()) {
-                //case 1 -> ((RecordJSON) record).setDateOfCreate(data);
-                //case 2 -> ((RecordCSV) record).setAccessDate(data);
-                case 3 -> ((RecordXML) record).setLastEditing(new Date(data));
+                case JSON -> ((RecordJSON) record).setDateOfCreate(MyDate.parse(data));
+                case CSV -> ((RecordCSV) record).setAccessDate(MyDate.parse(data));
+                case XML -> ((RecordXML) record).setLastEditing(MyDate.parse(data));
             }
         }
-
+        controller.editRecord(record, cellEditEvent.getTablePosition().getRow());
         update();
     }
 
     @FXML
-    private void createNewFile() {
-
+    private void addRecord() throws Exception {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Добавить запись о файле");
+        switch (whichVariantSelected()) {
+            case JSON:
+                File file = fileChooser.showOpenDialog(new Stage());
+                if (file == null) return;
+                BasicFileAttributes attribute = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(attribute.creationTime().toMillis());
+                controller.addRecord(new RecordJSON(file.getPath(),
+                        (int) file.length() / 1000,
+                        new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR)))
+                );
+                break;
+            case CSV:
+                AddRecordWindow arw = new AddRecordWindow(controller);
+                arw.start(newWindow("add-record-window.fxml", "Добавить запись"));
+                break;
+            case XML:
+                file = fileChooser.showOpenDialog(new Stage());
+                if (file == null) return;
+                calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(file.lastModified());
+                controller.addRecord(new RecordXML(file.getPath(),
+                        (double) file.length() / 1000000,
+                        new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
+                break;
+        }
+        update();
     }
 
     @FXML
-    private void openFile() throws JAXBException {
+    private void openFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Открыть файл с записями");
+        File file = null;
         switch (whichVariantSelected()) {
-            case 1:
+            case JSON -> {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
-                File file = fileChooser.showOpenDialog(new Stage());
+                file = fileChooser.showOpenDialog(new Stage());
                 if (file == null) return;
-                controller.loadJSON(file);
-                break;
-            case 2:
+                controller.load(file, FileType.JSON);
+            }
+            case CSV -> {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
                 file = fileChooser.showOpenDialog(new Stage());
                 if (file == null) return;
-                controller.loadCSV(file);
-                break;
-            case 3:
+                controller.load(file, FileType.CSV);
+            }
+            case XML -> {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
                 file = fileChooser.showOpenDialog(new Stage());
                 if (file == null) return;
-                controller.loadXML(file);
-                break;
+                controller.load(file, FileType.XML);
+            }
         }
+        fileMenuButton.getItems().get(1).setVisible(true);
+        fileMenuButton.getItems().get(3).setVisible(true);
+        fileMenuButton.getItems().get(4).setVisible(true);
+        currentFile = file;
         update();
     }
 
     @FXML
-    private void saveFileAs() throws JAXBException {
+    private void save() {
+        switch (whichVariantSelected()) {
+            case JSON -> controller.save(currentFile, FileType.JSON);
+            case CSV -> controller.save(currentFile, FileType.CSV);
+            case XML -> controller.save(currentFile, FileType.XML);
+        }
+    }
+
+    @FXML
+    private void saveFileAs() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Сохранить как");
         switch (whichVariantSelected()) {
-            case 1:
+            case JSON -> {
                 fileChooser.setInitialFileName("Записи.json");
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
                 File file = fileChooser.showSaveDialog(new Stage());
                 if (file == null) return;
-                controller.saveJSONAs(file);
-                break;
-            case 2:
+                controller.save(file, FileType.JSON);
+            }
+            case CSV -> {
                 fileChooser.setInitialFileName("Записи.csv");
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
-                file = fileChooser.showSaveDialog(new Stage());
+                File file = fileChooser.showSaveDialog(new Stage());
                 if (file == null) return;
-                controller.saveCSVAs(file);
-                break;
-            case 3:
+                controller.save(file, FileType.CSV);
+            }
+            case XML -> {
                 fileChooser.setInitialFileName("Записи.xml");
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
-                file = fileChooser.showSaveDialog(new Stage());
+                File file = fileChooser.showSaveDialog(new Stage());
                 if (file == null) return;
-                controller.saveXMLAs(file);
-                break;
+                controller.save(file, FileType.XML);
+            }
         }
     }
 
     @FXML
-    private void addRecord(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Добавить запись о файле");
-        switch (whichVariantSelected()) {
-            case 1:
-                File file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                break;
-            case 2:
-
-                break;
-            case 3:
-                file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                controller.addRecord(new RecordXML(file.getPath(), (double) file.length() / 1000000, new Date(file.lastModified())));
-                break;
+    private void createNewFile() {
+        try {
+            switch (whichVariantSelected()) {
+                case JSON -> {
+                    currentFile = File.createTempFile("temp", "json");
+                    controller.load(currentFile, FileType.JSON);
+                }
+                case CSV -> {
+                    currentFile = File.createTempFile("temp", "csv");
+                    controller.load(currentFile, FileType.CSV);
+                }
+                case XML -> {
+                    currentFile = File.createTempFile("temp", "xml");
+                    controller.load(currentFile, FileType.XML);
+                }
+            }
+            fileMenuButton.getItems().get(1).setVisible(true);
+            fileMenuButton.getItems().get(3).setVisible(true);
+            fileMenuButton.getItems().get(4).setVisible(true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        update();
+        tableReocrds.getItems().clear();
     }
 
-    private int whichVariantSelected() {
-        if (buttonFileVariantOne.isSelected()) return 1;
-        if (buttonFileVariantTwo.isSelected()) return 2;
-        if (buttonFileVariantThree.isSelected()) return 3;
-        return 0;
+    @FXML
+    private void analyze(ActionEvent event) {
+        try {
+            switch (((Button) event.getSource()).getText()) {
+                case "if" -> resultLabel.setText("Результат: выполнилось условие " + controller.analyzeIf(textAreaAnalyzer.getText()));
+                case "while" -> {
+                    if (!controller.analyzeWhile(textAreaAnalyzer.getText())) {
+                        resultLabel.setText("Результат: цикл ни разу не выполнится");
+                    } else {
+                        resultLabel.setText("Результат: цикл выполнится хотя бы раз");
+                    }
+                }
+            }
+        } catch (MyException e) {
+            AlertWindow.showAlert(e.getMessage());
+        }
     }
+
+    private FileType whichVariantSelected() {
+        if (buttonFileJSON.isSelected()) return FileType.JSON;
+        if (buttonFileCSV.isSelected()) return FileType.CSV;
+        if (buttonFileXML.isSelected()) return FileType.XML;
+        throw new RuntimeException("just chill");
+    }
+
+    private Stage newWindow(String fxml, String title) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource(fxml));
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(new Scene(fxmlLoader.load()));
+        return stage;
+    }
+
+    @FXML
+    private void sumLowLevel() {
+        actionLowLevelFunction.setText("+");
+    }
+
+    @FXML
+    private void divLowLevel() {
+        actionLowLevelFunction.setText("/");
+    }
+
+    @FXML
+    private void doAction(ActionEvent event) {
+        try {
+
+            switch (((SplitMenuButton) event.getSource()).getText()) {
+                case "+" -> resultLowLevelFunction.setText("Результат: " +
+                        LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText())));
+                case "/" -> resultLowLevelFunction.setText("Результат: " +
+                        LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText())));
+            }
+        } catch (Throwable e) {
+            AlertWindow.showAlert(e.getMessage());
+        }
+    }
+
 }

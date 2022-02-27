@@ -1,14 +1,13 @@
 package com.example.systemprogramm.controllermodels.file.record;
 
-import com.example.systemprogramm.controllermodels.file.MyData;
-import com.example.systemprogramm.controllermodels.file.record.Record;
+import com.example.systemprogramm.controllermodels.file.MyDate;
 
 public class RecordCSV implements Record {
     private String address;
     private String accessMode;
-    private MyData accessDate;
+    private MyDate accessDate;
 
-    public RecordCSV(String address, String accessMode, MyData accessDate){
+    public RecordCSV(String address, String accessMode, MyDate accessDate){
         this.address= address;
         this.accessMode = accessMode;
         this.accessDate = accessDate;
@@ -30,11 +29,11 @@ public class RecordCSV implements Record {
         this.accessMode = accessMode;
     }
 
-    public MyData getAccessDate() {
+    public MyDate getAccessDate() {
         return accessDate;
     }
 
-    public void setAccessDate(MyData accessDate) {
+    public void setAccessDate(MyDate accessDate) {
         this.accessDate = accessDate;
     }
 

@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="596.0" prefWidth="1176.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
+<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1076.0" prefHeight="596.0" prefWidth="1076.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
    <children>
-      <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="750.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="755.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Аналазитор">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ToggleButton mnemonicParsing="false" text="Вариант 1" />
-                        <ToggleButton layoutX="89.0" mnemonicParsing="false" text="Вариант 2" />
-                        <ToggleButton layoutX="178.0" mnemonicParsing="false" text="Вариант 3" />
+                        <TextArea fx:id="textAreaAnalyzer" prefHeight="421.0" prefWidth="450.0">
+                           <font>
+                              <Font size="20.0" />
+                           </font></TextArea>
+                        <Button layoutX="15.0" layoutY="462.0" mnemonicParsing="false" onAction="#analyze" prefHeight="50.0" prefWidth="50.0" text="if">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font></Button>
+                        <Button layoutX="219.0" layoutY="462.0" mnemonicParsing="false" onAction="#analyze" prefHeight="50.0" prefWidth="70.0" text="while">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font></Button>
+                        <Text layoutX="14.0" layoutY="451.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Какую конструкцию проанализировать:" />
+                        <Text layoutX="456.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Реализуемая конструкция языка (Синтаксис C#):&#10;Цикл с предусловием&#10;while(&lt;условие&gt;){&lt;тело цикла&gt;}&#10;Определить, выполнится ли цикл хотя бы раз&#10;&#10;Оператор условного перехода&#10;if(&lt;условие&gt;){&lt;действие 1&gt;}&#10;[else {&lt;действие 2&gt;}]&#10;Определить какое из условий выполнится" wrappingWidth="298.0947265625" />
+                        <Label fx:id="resultLabel" layoutX="450.0" layoutY="255.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -31,10 +49,10 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="595.0" prefWidth="630.0">
                      <children>
-                        <ToggleButton fx:id="buttonFileVariantOne" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="Вариант 1" />
-                        <ToggleButton fx:id="buttonFileVariantTwo" layoutX="89.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="Вариант 2" />
-                        <ToggleButton fx:id="buttonFileVariantThree" layoutX="178.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="Вариант 3" />
-                        <Label fx:id="labelFileVariant" layoutX="600.0" layoutY="77.0" text="Label" />
+                        <ToggleButton fx:id="buttonFileJSON" layoutX="272.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="JSON" />
+                        <ToggleButton fx:id="buttonFileCSV" layoutX="388.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="CSV" />
+                        <ToggleButton fx:id="buttonFileXML" layoutX="510.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="XML" />
+                        <Label fx:id="labelFileVariant" alignment="TOP_LEFT" layoutX="600.0" layoutY="77.0" prefHeight="288.0" prefWidth="150.0" wrapText="true" />
                         <TableView fx:id="tableReocrds" editable="true" layoutY="77.0" prefHeight="474.0" prefWidth="600.0">
                           <columns>
                             <TableColumn fx:id="fileColumn1" maxWidth="200.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="200.0" sortable="false" text="Путь к файлу" />
@@ -42,11 +60,12 @@
                               <TableColumn fx:id="fileColumn3" maxWidth="250.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="250.0" sortable="false" text="Дата создания" />
                           </columns>
                         </TableView>
-                        <MenuButton layoutY="46.0" mnemonicParsing="false" text="Файл">
+                        <MenuButton fx:id="fileMenuButton" layoutY="46.0" mnemonicParsing="false" text="Файл">
                           <items>
                               <MenuItem mnemonicParsing="false" onAction="#createNewFile" text="Новый файл" />
                               <MenuItem mnemonicParsing="false" onAction="#addRecord" text="Добавить запись" />
                             <MenuItem mnemonicParsing="false" onAction="#openFile" text="Открыть" />
+                              <MenuItem mnemonicParsing="false" onAction="#save" text="Сохранить" />
                             <MenuItem mnemonicParsing="false" onAction="#saveFileAs" text="Сохранить как" />
                           </items>
                         </MenuButton>
@@ -58,16 +77,22 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ToggleButton mnemonicParsing="false" text="Вариант1" />
-                        <ToggleButton layoutX="85.0" mnemonicParsing="false" text="Вариант 2" />
-                        <ToggleButton layoutX="174.0" mnemonicParsing="false" text="Вариант 3" />
+                        <TextField fx:id="textFieldFirstValue" layoutX="14.0" layoutY="92.0" />
+                        <TextField fx:id="textFieldSecondValue" layoutX="340.0" layoutY="92.0" />
+                        <Label fx:id="resultLowLevelFunction" layoutX="14.0" layoutY="143.0" prefHeight="21.0" prefWidth="190.0" wrapText="true" />
+                        <SplitMenuButton fx:id="actionLowLevelFunction" layoutX="238.0" layoutY="92.0" mnemonicParsing="false" onAction="#doAction" prefHeight="31.0" prefWidth="61.0" text="+">
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#sumLowLevel" text="Сложить" />
+                            <MenuItem mnemonicParsing="false" onAction="#divLowLevel" text="Разделить" />
+                          </items>
+                        </SplitMenuButton>
                      </children>
                   </AnchorPane>
                </content>
             </Tab>
         </tabs>
       </TabPane>
-      <ListView layoutX="753.0" layoutY="35.0" prefHeight="551.0" prefWidth="322.0" />
+      <ListView disable="true" layoutX="753.0" layoutY="40.0" prefHeight="557.0" prefWidth="322.0" />
       <Label layoutX="902.0" layoutY="14.0" text="Лог" />
    </children>
 </Pane>
