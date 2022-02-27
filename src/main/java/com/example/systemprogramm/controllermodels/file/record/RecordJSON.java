@@ -43,4 +43,14 @@ public class RecordJSON implements Record {
     public void setDateOfCreate(MyDate dateOfCreate) {
         this.dateOfCreate = dateOfCreate;
     }
+
+    @Override
+    public String toString(){
+        return String.format("filePath = %s, kByteSize = %s, dateOfCreate = %s", filePath, kByteSize, dateOfCreate);
+    }
+
+    @Override
+    public Record clone() throws CloneNotSupportedException {
+        return new RecordJSON(this.filePath, this.kByteSize, this.dateOfCreate.clone());
+    }
 }

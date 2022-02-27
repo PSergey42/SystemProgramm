@@ -39,7 +39,7 @@
                            </font></Button>
                         <Text layoutX="14.0" layoutY="451.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Какую конструкцию проанализировать:" />
                         <Text layoutX="456.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Реализуемая конструкция языка (Синтаксис C#):&#10;Цикл с предусловием&#10;while(&lt;условие&gt;){&lt;тело цикла&gt;}&#10;Определить, выполнится ли цикл хотя бы раз&#10;&#10;Оператор условного перехода&#10;if(&lt;условие&gt;){&lt;действие 1&gt;}&#10;[else {&lt;действие 2&gt;}]&#10;Определить какое из условий выполнится" wrappingWidth="298.0947265625" />
-                        <Label fx:id="resultLabel" layoutX="450.0" layoutY="255.0" />
+                        <Label fx:id="resultLabel" layoutX="450.0" layoutY="255.0" prefHeight="84.0" prefWidth="303.0" wrapText="true" />
                      </children>
                   </AnchorPane>
             </content>

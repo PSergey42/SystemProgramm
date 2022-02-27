@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class WindowView extends Application implements View {
     private static Controller controller;
@@ -206,6 +208,7 @@ public class WindowView extends Application implements View {
         try {
             String data = cellEditEvent.getNewValue();
             Record record = cellEditEvent.getRowValue();
+            Record oldValue = record.clone();
             if (fileColumn1 == cellEditEvent.getTableColumn()) {
                 switch (whichVariantSelected()) {
                     case JSON -> ((RecordJSON) record).setFilePath(data);
@@ -231,8 +234,9 @@ public class WindowView extends Application implements View {
                 }
             }
             controller.editRecord(record, cellEditEvent.getTablePosition().getRow());
-        } catch (ParseException | AnalyzeException e) {
-            logArea.appendText("Error: " + e.getMessage() + "\n");
+            printLog("Запись " + oldValue + " успешно изменена на " + record);
+        } catch (ParseException | AnalyzeException | CloneNotSupportedException e) {
+            printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
         update();
@@ -269,9 +273,10 @@ public class WindowView extends Application implements View {
                             new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
                     break;
             }
+            printLog("Запись " + controller.getRecords().get(controller.getRecords().size() - 1) + " успешно добавлена");
             update();
         } catch (Exception e) {
-            logArea.appendText("Error: " + e.getMessage() + "\n");
+            printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
     }
@@ -279,7 +284,6 @@ public class WindowView extends Application implements View {
     @FXML
     private void openFile() {
         try {
-
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Открыть файл с записями");
             File file = null;
@@ -307,9 +311,10 @@ public class WindowView extends Application implements View {
             fileMenuButton.getItems().get(3).setVisible(true);
             fileMenuButton.getItems().get(4).setVisible(true);
             currentFile = file;
+            printLog("Файл " + currentFile.getAbsolutePath() + " успешно открыт");
             update();
         } catch (Throwable e) {
-            logArea.appendText("Error: " + e.getMessage() + "\n");
+            printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
     }
@@ -321,6 +326,7 @@ public class WindowView extends Application implements View {
             case CSV -> controller.save(currentFile, FileType.CSV);
             case XML -> controller.save(currentFile, FileType.XML);
         }
+        printLog("Файл " + currentFile.getName() + " сохранён");
     }
 
     @FXML
@@ -351,8 +357,9 @@ public class WindowView extends Application implements View {
                     controller.save(file, FileType.XML);
                 }
             }
+            printLog("Файл сохранён по пути: " + currentFile.getAbsolutePath());
         } catch (Throwable e) {
-            logArea.appendText("Error: " + e.getMessage() + "\n");
+            printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
     }
@@ -360,43 +367,54 @@ public class WindowView extends Application implements View {
     @FXML
     private void createNewFile() {
         try {
+            File file;
             switch (whichVariantSelected()) {
                 case JSON -> {
-                    currentFile = File.createTempFile("temp", "json");
+                    currentFile = file = new File("test.json");
                     controller.load(currentFile, FileType.JSON);
                 }
                 case CSV -> {
-                    currentFile = File.createTempFile("temp", "csv");
+                    currentFile = File.createTempFile("temp", ".csv");
                     controller.load(currentFile, FileType.CSV);
                 }
                 case XML -> {
-                    currentFile = File.createTempFile("temp", "xml");
+                    currentFile = File.createTempFile("temp", ".xml");
                     controller.load(currentFile, FileType.XML);
                 }
             }
+            printLog("Создан новый файл: " + currentFile.getAbsolutePath());
             fileMenuButton.getItems().get(1).setVisible(true);
             fileMenuButton.getItems().get(3).setVisible(true);
             fileMenuButton.getItems().get(4).setVisible(true);
+            tableReocrds.getItems().clear();
         } catch (IOException e) {
-            e.printStackTrace();
+            printLog("Error: " + e.getMessage());
+            AlertWindow.showAlert(e.getMessage());
         }
-        tableReocrds.getItems().clear();
     }
 
     @FXML
     private void analyze(ActionEvent event) {
         try {
             switch (((Button) event.getSource()).getText()) {
-                case "if" -> resultLabel.setText("Результат: выполнилось условие " + controller.analyzeIf(textAreaAnalyzer.getText()));
+                case "if" -> {
+                    String result = controller.analyzeIf(textAreaAnalyzer.getText());
+                    if (result.equals("null")) result = "Не выполнилось ни одно из условий";
+                    resultLabel.setText("Результат: выполнилось условие " + result);
+                    printLog("Анализ выполнился с результатом: " + result);
+                }
                 case "while" -> {
                     if (!controller.analyzeWhile(textAreaAnalyzer.getText())) {
                         resultLabel.setText("Результат: цикл ни разу не выполнится");
+                        printLog("Анализ выполнился с результатом: цикл ни разу не выполнится");
                     } else {
                         resultLabel.setText("Результат: цикл выполнится хотя бы раз");
+                        printLog("Анализ выполнился с результатом: цикл выполнится хотя бы раз");
                     }
                 }
             }
-        } catch (AnalyzeException e) {
+        } catch (Throwable e) {
+            printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
     }
@@ -429,22 +447,33 @@ public class WindowView extends Application implements View {
     @FXML
     private void doAction(ActionEvent event) {
         try {
+            int result;
             switch (((SplitMenuButton) event.getSource()).getText()) {
                 case "+" -> {
-                    int result = LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
+                    result = LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
                     if (result == 0 && !textFieldFirstValue.getText().equals("0"))
                         throw new ArithmeticException("Слишком большое число!");
                     resultLowLevelFunction.setText(result + "");
+                    printLog("Результатом сложения является: " + result);
                 }
                 case "/" -> {
                     if (textFieldSecondValue.getText().equals("0")) throw new ArithmeticException("Деление на 0");
-                    else resultLowLevelFunction.setText("" +
-                            LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText())));
+                    else {
+                        result = LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
+                        resultLowLevelFunction.setText("" + result);
+                        printLog("Результатом деления является: " + result);
+                    }
                 }
             }
         } catch (RuntimeException e) {
-            logArea.appendText("Error: " + e.getMessage() + "\n");
+            printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
+    }
+
+    private void printLog(String message) {
+        Date date = new Date();
+        SimpleDateFormat currentDate = new SimpleDateFormat("'['hh:mm:ss']: '");
+        logArea.appendText(currentDate.format(date) + message + "\n");
     }
 }

@@ -21,13 +21,13 @@ public class Analyzer {
             String[] initMas = mas[0].trim().split(";");
 
             for (; i < initMas.length; i++) {
-                if (initMas[i].trim() == "") continue;
+                if (initMas[i].trim().equals("")) continue;
                 analyzeInit(initMas[i]);
             }
             toStringMap();
             return analyzeWhile(mas[1].trim());
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new AnalyzeException(e.getMessage());
         } finally {
             clearMaps();
@@ -41,28 +41,30 @@ public class Analyzer {
                 String[] masRes = new String[3];
                 mainString.replaceAll("[\\s]{2,}", " ").trim();
                 String[] mas = mainString.split("if[\\s]*\\(");
-                if (mas.length != 2) throw new AnalyzeException("Данная конструкция не содержит if");
+                if (mas.length != 2) throw new AnalyzeException("Данная конструкция либо не содержит if, либо содержит больше одного");
                 masRes[0] = mas[0].trim();
                 try {
                     String[] mas2 = mas[1].split("else[\\s]*\\{");
                     masRes[1] = "("+mas2[0];
                     masRes[2] = mas2[1].trim().substring(0, mas2[1].trim().length()-1);
                 }
-                catch (Exception e){
+                catch (Throwable e){
                     masRes[1] = "(" + mas[1];
                 }
                 if (masRes[0].trim().lastIndexOf(";") != masRes[0].trim().length() - 1) throw new AnalyzeException("Отсутствует ;");
                 String[] initMas = masRes[0].trim().split(";");
                 for (; i < initMas.length; i++) {
-                    if (initMas[i].trim() == "") continue;
+                    if (initMas[i].trim().equals("")) continue;
                     analyzeInit(initMas[i]);
                 }
                 toStringMap();
                 boolean b = analyzeWhile(masRes[1].trim());
                 if(masRes[2] != null){
+                    masRes[2] = masRes[2].trim();
                     if (masRes[2].lastIndexOf(";") != masRes[2].length() - 1) throw new AnalyzeException("Отсутствует ; в теле оператора");
                     String[] elseStr = masRes[2].split(";");
                     for (String s : elseStr){
+                        if (s.equals("")) continue;
                         analyzeInit(s.trim());
                     }
                 }
@@ -70,11 +72,11 @@ public class Analyzer {
                 if(masRes[2] == null){return "null";}
                 return "else";
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new AnalyzeException(e.getMessage());
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new AnalyzeException(e.getMessage());
         }
         finally {
@@ -108,12 +110,13 @@ public class Analyzer {
                     res = false;
                 }
             }
-            if(str[1].trim().equals("")){ return res;}
+            str[1] = str[1].trim();
+            if(str[1].equals("")){ return res;}
             else if (str[1].lastIndexOf(";") != str[1].length() - 1) throw new AnalyzeException("Отсутствует ; в теле оператора");
             String[] bodyWhile = str[1].split(";");
             for (String s : bodyWhile) analyzeInit(s.trim());
             return res;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new AnalyzeException(e.getMessage());
         }
 
@@ -255,7 +258,7 @@ public class Analyzer {
                 default:
                     throw new AnalyzeException("Ошибка со знакам(и)");
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             throw new AnalyzeException("Ошибка в условии");
         }
     }
@@ -276,7 +279,7 @@ public class Analyzer {
         try {
             Double.parseDouble(num);
             return true;
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             return false;
         }
     }
@@ -321,7 +324,7 @@ public class Analyzer {
                 case "int": {
                     try {
                         intMap.put(firstParam[1], Integer.parseInt(param[1].trim()));
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         if (intMap.containsKey(param[1]))
                             intMap.put(firstParam[1], intMap.get(param[1]));
                         else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
@@ -331,7 +334,7 @@ public class Analyzer {
                 case "double": {
                     try {
                         doubleMap.put(firstParam[1], Double.parseDouble(param[1].trim()));
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         if (doubleMap.containsKey(param[1]))
                             doubleMap.put(firstParam[1], doubleMap.get(param[1]));
                         else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
@@ -351,7 +354,7 @@ public class Analyzer {
                         if (param[1].trim().equals("true") || param[1].trim().equals("false"))
                             booleanMap.put(firstParam[1], Boolean.valueOf(param[1].trim()));
                         else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         if (booleanMap.containsKey(param[1]))
                             booleanMap.put(firstParam[1], booleanMap.get(param[1]));
                         else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
@@ -361,7 +364,7 @@ public class Analyzer {
                 default:
                     throw new AnalyzeException("Выйди и зайди нормально");
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             throw new AnalyzeException("Ты что совсем тупой?");
         }
     }

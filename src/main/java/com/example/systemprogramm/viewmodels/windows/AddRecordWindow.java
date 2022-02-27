@@ -52,6 +52,7 @@ public class AddRecordWindow extends Window {
                     comboBoxAccess.getValue(),
                     MyDate.parse(textFieldDateAccess.getText()))
             );
+
             ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
         } else {
 

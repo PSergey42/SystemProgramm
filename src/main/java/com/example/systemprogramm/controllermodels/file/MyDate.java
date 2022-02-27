@@ -1,12 +1,14 @@
 package com.example.systemprogramm.controllermodels.file;
 
+import com.example.systemprogramm.controllermodels.file.record.Record;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
-public class MyDate implements Serializable {
+public class MyDate implements Serializable, Cloneable {
     private int day;
     private int month;
     private int year;
@@ -64,5 +66,10 @@ public class MyDate implements Serializable {
     @Override
     public String toString() {
         return day + "." + month + "." + year;
+    }
+
+    @Override
+    public MyDate clone() throws CloneNotSupportedException {
+        return (MyDate) super.clone();
     }
 }

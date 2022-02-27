@@ -54,4 +54,9 @@ public class RecordXML implements Record {
     public String toString() {
         return String.format("{\"filePath\" : \"%s\", \"mByteFileSize\" : \"%f:\", \"lastEditing\" : \"%s\"}", filePath, mByteFileSize, lastEditing);
     }
+
+    @Override
+    public Record clone() throws CloneNotSupportedException {
+        return new RecordXML(this.filePath, this.mByteFileSize, this.lastEditing.clone());
+    }
 }

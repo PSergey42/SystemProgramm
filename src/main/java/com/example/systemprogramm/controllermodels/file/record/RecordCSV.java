@@ -41,4 +41,9 @@ public class RecordCSV implements Record {
     public String toString() {
         return '"' + address + '"' + "," + '"' + accessMode+ '"' + "," + accessDate;
     }
+
+    @Override
+    public Record clone() throws CloneNotSupportedException {
+        return new RecordCSV(this.address, this.accessMode, this.accessDate.clone());
+    }
 }
