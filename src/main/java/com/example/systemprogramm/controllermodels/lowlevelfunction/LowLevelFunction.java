@@ -9,7 +9,7 @@ public class LowLevelFunction {
     public native static int addWithOverflowCheck(int x, int y);
 
     public static void main(String[] args) {
-        System.out.println(div(100, 3));      // вызываем функцию
+        System.out.println(div(-100, 3));      // вызываем функцию
         System.out.println(addWithOverflowCheck(2147483645,3));
     }
 }

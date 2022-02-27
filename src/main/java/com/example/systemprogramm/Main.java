@@ -46,7 +46,7 @@ public class Main {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         System.out.println(((RecordModel)unmarshaller.unmarshal(new File("test2.xml"))).getRecords());*/
         try {
-            //System.out.println(Analyzer.analyze("int s =14;double whilea = 2.2; int a = s; bool af3 = true ;while(2==2){}"));
+            System.out.println(Analyzer.analyze(""));
             //System.out.println(Analyzer.analyze2("int s =14;double ifa = 2.2; int a = s; bool af3 = true; if(true){ } else { s++;}"));
 
         }
@@ -55,8 +55,8 @@ public class Main {
         }
 
 
-        View viewer = WindowView.getView();
+       /* View viewer = WindowView.getView();
         viewer.setController(ControllerModel.getInstance(viewer));
-        viewer.run();
+        viewer.run();*/
     }
 }

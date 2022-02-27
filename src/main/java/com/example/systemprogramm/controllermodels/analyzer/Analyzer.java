@@ -19,7 +19,6 @@ public class Analyzer {
             mas[1] = "("+mas[1];
             if (mas[0].trim().lastIndexOf(";") != mas[0].trim().length() - 1) throw new AnalyzeException("Отсутствует ;");
             String[] initMas = mas[0].trim().split(";");
-
             for (; i < initMas.length; i++) {
                 if (initMas[i].trim().equals("")) continue;
                 analyzeInit(initMas[i]);
