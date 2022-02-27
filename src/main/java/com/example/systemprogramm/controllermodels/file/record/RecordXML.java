@@ -2,20 +2,30 @@ package com.example.systemprogramm.controllermodels.file.record;
 
 import com.example.systemprogramm.controllermodels.file.MyDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Date;
 
+@Entity
+@Table(name = "xml")
 @XmlRootElement(name = "record")
 @XmlType(propOrder = {"lastEditing", "MByteFileSize", "filePath"})
 public class RecordXML implements Record {
+    @Id
+    @Column(name = "file_path")
     private String filePath;
+    @Column(name = "m_byte_file_path")
     private double mByteFileSize;
+    @Column(name = "mydate")
     private MyDate lastEditing;
 
-    private RecordXML() {
+    public RecordXML() {
     }
 
     public RecordXML(String filePath, double mByteFileSize, MyDate lastEditing) {

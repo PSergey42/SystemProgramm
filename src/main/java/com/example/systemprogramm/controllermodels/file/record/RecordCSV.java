@@ -1,11 +1,21 @@
 package com.example.systemprogramm.controllermodels.file.record;
 
 import com.example.systemprogramm.controllermodels.file.MyDate;
+import javax.persistence.*;
 
+@Entity
+@Table (name = "mycsv")
 public class RecordCSV implements Record {
+
+    @Id
     private String address;
+    @Column(name = "accessmode")
     private String accessMode;
+    @Column(name = "mydate")
     private MyDate accessDate;
+
+    public RecordCSV(){
+    }
 
     public RecordCSV(String address, String accessMode, MyDate accessDate){
         this.address= address;

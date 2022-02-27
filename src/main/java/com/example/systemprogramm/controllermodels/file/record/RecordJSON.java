@@ -3,11 +3,21 @@ package com.example.systemprogramm.controllermodels.file.record;
 import com.example.systemprogramm.controllermodels.file.MyDate;
 import com.example.systemprogramm.controllermodels.file.record.Record;
 
+import javax.persistence.*;
 import java.util.Calendar;
+import java.util.Date;
 
+@Entity
+@Table(name = "json")
 public class RecordJSON implements Record {
+    @Id
+    @Column(name = "file_path")
     private String filePath;
+    @Column(name = "k_byte_size")
     private int kByteSize;
+    @Column(name = "mydate")
+    private Date hi;
+    @Transient
     private MyDate dateOfCreate;
 
     public RecordJSON(){
