@@ -18,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1070.0" prefHeight="596.0" prefWidth="1070.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
+<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1070.0" prefHeight="596.0" prefWidth="1070.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
    <children>
       <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="755.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -52,8 +52,8 @@
                         <ToggleButton fx:id="buttonFileJSON" layoutX="122.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="JSON" />
                         <ToggleButton fx:id="buttonFileCSV" layoutX="215.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="CSV" />
                         <ToggleButton fx:id="buttonFileXML" layoutX="300.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#fileVariantClick" text="XML" />
-                        <Label fx:id="labelFileVariant" alignment="TOP_LEFT" layoutX="613.0" layoutY="85.0" prefHeight="288.0" prefWidth="139.0" wrapText="true" />
-                        <TableView fx:id="tableReocrds" editable="true" layoutX="8.0" layoutY="57.0" prefHeight="490.0" prefWidth="600.0">
+                        <Label fx:id="labelFileVariant" alignment="TOP_LEFT" layoutX="613.0" layoutY="57.0" prefHeight="288.0" prefWidth="140.0" wrapText="true" />
+                        <TableView fx:id="tableReocrds" editable="true" layoutX="8.0" layoutY="57.0" prefHeight="501.0" prefWidth="600.0">
                           <columns>
                             <TableColumn fx:id="fileColumn1" maxWidth="200.0" minWidth="200.0" onEditCommit="#editRecord" prefWidth="200.0" sortable="false" text="Путь к файлу" />
                             <TableColumn fx:id="fileColumn2" maxWidth="150.0" minWidth="150.0" onEditCommit="#editRecord" prefWidth="150.0" sortable="false" text="Размер файла, КБ" />
@@ -79,13 +79,41 @@
                      <children>
                         <TextField fx:id="textFieldFirstValue" layoutX="26.0" layoutY="89.0" prefHeight="31.0" prefWidth="149.0" />
                         <TextField fx:id="textFieldSecondValue" layoutX="328.0" layoutY="89.0" prefHeight="31.0" prefWidth="154.0" />
-                        <Label fx:id="resultLowLevelFunction" layoutX="14.0" layoutY="143.0" prefHeight="21.0" prefWidth="190.0" wrapText="true" />
+                        <Label fx:id="resultLowLevelFunction" layoutX="195.0" layoutY="144.0" prefHeight="18.0" prefWidth="182.0" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
                         <SplitMenuButton fx:id="actionLowLevelFunction" layoutX="225.0" layoutY="89.0" mnemonicParsing="false" onAction="#doAction" prefHeight="31.0" prefWidth="61.0" text="+">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#sumLowLevel" text="Сложить" />
                             <MenuItem mnemonicParsing="false" onAction="#divLowLevel" text="Разделить" />
                           </items>
                         </SplitMenuButton>
+                        <Label layoutX="122.0" layoutY="141.0" prefHeight="25.0" prefWidth="82.0" text="Результат:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="TOP_LEFT" layoutX="26.0" layoutY="285.0" prefHeight="198.0" prefWidth="224.0" text="Разделить ондо значение &#10;на другое">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="TOP_LEFT" layoutX="359.0" layoutY="286.0" prefHeight="197.0" prefWidth="220.0" text="Сложить два целых числа &#10;без знака с проверкой &#10;переполнения">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="26.0" layoutY="258.0" text="Задание 1:">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="359.0" layoutY="258.0" text="Задание 2:">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
                </content>
@@ -95,7 +123,7 @@
       <ListView disable="true" layoutX="755.0" layoutY="31.0" prefHeight="560.0" prefWidth="310.0" />
       <Label layoutX="899.0" layoutY="2.0" prefHeight="25.0" prefWidth="38.0" text="Лог">
          <font>
-            <Font size="16.0" />
+            <Font name="System Bold" size="16.0" />
          </font></Label>
    </children>
 </Pane>
