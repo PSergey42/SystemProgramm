@@ -13,10 +13,11 @@ public class Analyzer {
         int i = 0;
         try {
             mainString.replaceAll("[\\s]{2,}", " ").trim();
+            if(mainString.equals("")) throw new AnalyzeException("Данная конструкция не содержит цикл while");
             String[] mas = mainString.split("while[\\s]*\\(");
+            if (mas.length != 2) throw new AnalyzeException("Неккорректная структура цикла while");
             mas[1] = "("+mas[1];
-            if (mas.length != 2) throw new MyException("Данная конструкция не содержит цикл while");
-            if (mas[0].trim().lastIndexOf(";") != mas[0].trim().length() - 1) throw new MyException("Отсутствует ;");
+            if (mas[0].trim().lastIndexOf(";") != mas[0].trim().length() - 1) throw new AnalyzeException("Отсутствует ;");
             String[] initMas = mas[0].trim().split(";");
 
             for (; i < initMas.length; i++) {
@@ -27,7 +28,7 @@ public class Analyzer {
             return analyzeWhile(mas[1].trim());
 
         } catch (Exception e) {
-            throw new MyException(e.getMessage());
+            throw new AnalyzeException(e.getMessage());
         } finally {
             clearMaps();
         }
@@ -40,7 +41,7 @@ public class Analyzer {
                 String[] masRes = new String[3];
                 mainString.replaceAll("[\\s]{2,}", " ").trim();
                 String[] mas = mainString.split("if[\\s]*\\(");
-                if (mas.length != 2) throw new MyException("Данная конструкция не содержит if");
+                if (mas.length != 2) throw new AnalyzeException("Данная конструкция не содержит if");
                 masRes[0] = mas[0].trim();
                 try {
                     String[] mas2 = mas[1].split("else[\\s]*\\{");
@@ -50,7 +51,7 @@ public class Analyzer {
                 catch (Exception e){
                     masRes[1] = "(" + mas[1];
                 }
-                if (masRes[0].trim().lastIndexOf(";") != masRes[0].trim().length() - 1) throw new MyException("Отсутствует ;");
+                if (masRes[0].trim().lastIndexOf(";") != masRes[0].trim().length() - 1) throw new AnalyzeException("Отсутствует ;");
                 String[] initMas = masRes[0].trim().split(";");
                 for (; i < initMas.length; i++) {
                     if (initMas[i].trim() == "") continue;
@@ -59,7 +60,7 @@ public class Analyzer {
                 toStringMap();
                 boolean b = analyzeWhile(masRes[1].trim());
                 if(masRes[2] != null){
-                    if (masRes[2].lastIndexOf(";") != masRes[2].length() - 1) throw new MyException("Отсутствует ; в теле оператора");
+                    if (masRes[2].lastIndexOf(";") != masRes[2].length() - 1) throw new AnalyzeException("Отсутствует ; в теле оператора");
                     String[] elseStr = masRes[2].split(";");
                     for (String s : elseStr){
                         analyzeInit(s.trim());
@@ -70,11 +71,11 @@ public class Analyzer {
                 return "else";
 
             } catch (Exception e) {
-                throw new MyException(e.getMessage());
+                throw new AnalyzeException(e.getMessage());
             }
 
         } catch (Exception e) {
-            throw new MyException(e.getMessage());
+            throw new AnalyzeException(e.getMessage());
         }
         finally {
             clearMaps();
@@ -84,19 +85,19 @@ public class Analyzer {
     private static boolean analyzeWhile(String whileString) {
         try {
             if (whileString.charAt(0) != '(' || whileString.charAt(whileString.length() - 1) != '}')
-                throw new MyException("Ошибка в расстановке скобок");
+                throw new AnalyzeException("Ошибка в расстановке скобок");
             String[] str = whileString.split("\\)");
-            if (str.length != 2) throw new MyException("Ошибка с количеством )");
+            if (str.length != 2) throw new AnalyzeException("Ошибка с количеством )");
             str[1] = str[1].trim();
             if (str[0].length() > 1)
                 str[0] = str[0].substring(1);
             else str[0] = "";
-            if (str[1].charAt(0) != '{') throw new MyException("Ошибка в расстановке скобок");
+            if (str[1].charAt(0) != '{') throw new AnalyzeException("Ошибка в расстановке скобок");
             str[1] = str[1].substring(1, str[1].length() - 1);
-            if (str[0].trim().equals("")) throw new MyException("Условие не может быть пустым");
+            if (str[0].trim().equals("")) throw new AnalyzeException("Условие не может быть пустым");
             String[] a = str[0].replaceAll("[|]{2,}", "|").replaceAll("[\\&]{2,}", "&").split("[&|]");
             List<String> list = getRazd(str[0]);
-            if (list.size() != a.length - 1) throw new MyException("Ошибка в условии");
+            if (list.size() != a.length - 1) throw new AnalyzeException("Ошибка в условии");
             boolean res = false;
             for (int i = 0; i < a.length; i++) {
                 boolean newbool = analyzeWhileCriterion(a[i].trim());
@@ -108,12 +109,12 @@ public class Analyzer {
                 }
             }
             if(str[1].trim().equals("")){ return res;}
-            else if (str[1].lastIndexOf(";") != str[1].length() - 1) throw new MyException("Отсутствует ; в теле оператора");
+            else if (str[1].lastIndexOf(";") != str[1].length() - 1) throw new AnalyzeException("Отсутствует ; в теле оператора");
             String[] bodyWhile = str[1].split(";");
             for (String s : bodyWhile) analyzeInit(s.trim());
             return res;
         } catch (Exception e) {
-            throw new MyException(e.getMessage());
+            throw new AnalyzeException(e.getMessage());
         }
 
     }
@@ -212,7 +213,7 @@ public class Analyzer {
                             type2 = "string";
                     }
                     if (type1 != type2 || type1.equals("null"))
-                        throw new MyException("Ошибка в условии (не совпадают типы)");
+                        throw new AnalyzeException("Ошибка в условии (не совпадают типы)");
                     if (type1 != "int" && type1 != "double")
                         return n1[1].equals(n2[1]);
                     return Double.parseDouble(n1[1]) == Double.parseDouble(n2[1]);
@@ -239,7 +240,7 @@ public class Analyzer {
                             type2 = "string";
                     }
                     if (!type1.equals(type2) || type1.equals("null"))
-                        throw new MyException("Ошибка в условии (не совпадают типы)");
+                        throw new AnalyzeException("Ошибка в условии (не совпадают типы)");
                     if (!type1.equals("int") && type1 != "double")
                         return !n1[1].equals(n2[1]);
                     return Double.parseDouble(n1[1]) != Double.parseDouble(n2[1]);
@@ -249,13 +250,13 @@ public class Analyzer {
                         return Boolean.parseBoolean(init);
                     if (booleanMap.containsKey(init))
                         return booleanMap.get(init);
-                    throw new MyException("Ошибка в условии");
+                    throw new AnalyzeException("Ошибка в условии");
                 }
                 default:
-                    throw new MyException("Ошибка со знакам(и)");
+                    throw new AnalyzeException("Ошибка со знакам(и)");
             }
         } catch (Exception ex) {
-            throw new MyException("Ошибка в условии");
+            throw new AnalyzeException("Ошибка в условии");
         }
     }
 
@@ -307,14 +308,14 @@ public class Analyzer {
         String[] param = init.trim().split("=");
         if (param.length != 2)
             if (param.length == 1)
-                if (!plusplusChek(param[0].trim())) throw new MyException("Ошибка в операции присваивания: " + init);
+                if (!plusplusChek(param[0].trim())) throw new AnalyzeException("Ошибка в операции присваивания: " + init);
                 else return;
         String[] firstParam = param[0].trim().split(" ");
-        if (firstParam.length != 2) throw new MyException("Ошибка в синтаксисе :" + param[0]);
-        if (mapContainsName(firstParam[1])) throw new MyException("Имя уже занято: " + firstParam[1]);
+        if (firstParam.length != 2) throw new AnalyzeException("Ошибка в синтаксисе :" + param[0]);
+        if (mapContainsName(firstParam[1])) throw new AnalyzeException("Имя уже занято: " + firstParam[1]);
         param[1] = param[1].trim();
         if (povtorCheck(firstParam[1]))
-            throw new MyException("Невозможно назвать переменную зарезервированным словом" + firstParam[1]);
+            throw new AnalyzeException("Невозможно назвать переменную зарезервированным словом" + firstParam[1]);
         try {
             switch (firstParam[0]) {
                 case "int": {
@@ -323,7 +324,7 @@ public class Analyzer {
                     } catch (Exception e) {
                         if (intMap.containsKey(param[1]))
                             intMap.put(firstParam[1], intMap.get(param[1]));
-                        else throw new MyException("Неверное значение параметра: " + param[1]);
+                        else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
                     }
                     break;
                 }
@@ -333,7 +334,7 @@ public class Analyzer {
                     } catch (Exception e) {
                         if (doubleMap.containsKey(param[1]))
                             doubleMap.put(firstParam[1], doubleMap.get(param[1]));
-                        else throw new MyException("Неверное значение параметра: " + param[1]);
+                        else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
                     }
                     break;
                 }
@@ -341,7 +342,7 @@ public class Analyzer {
                     if (param[1].charAt(0) != '"' || param[1].charAt(param[1].trim().length() - 1) != '"') {
                         if (stringMap.containsKey(param[1]))
                             stringMap.put(firstParam[1], stringMap.get(param[1]));
-                        else throw new MyException();
+                        else throw new AnalyzeException();
                     } else stringMap.put(firstParam[1], param[1].substring(1, param[1].length() - 1));
                     break;
                 }
@@ -349,19 +350,19 @@ public class Analyzer {
                     try {
                         if (param[1].trim().equals("true") || param[1].trim().equals("false"))
                             booleanMap.put(firstParam[1], Boolean.valueOf(param[1].trim()));
-                        else throw new MyException("Неверное значение параметра: " + param[1]);
+                        else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
                     } catch (Exception e) {
                         if (booleanMap.containsKey(param[1]))
                             booleanMap.put(firstParam[1], booleanMap.get(param[1]));
-                        else throw new MyException("Неверное значение параметра: " + param[1]);
+                        else throw new AnalyzeException("Неверное значение параметра: " + param[1]);
                     }
                     break;
                 }
                 default:
-                    throw new MyException("Выйди и зайди нормально");
+                    throw new AnalyzeException("Выйди и зайди нормально");
             }
         } catch (Exception ex) {
-            throw new MyException("Ты что совсем тупой?");
+            throw new AnalyzeException("Ты что совсем тупой?");
         }
     }
 

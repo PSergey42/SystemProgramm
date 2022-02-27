@@ -1,7 +1,7 @@
 package com.example.systemprogramm.viewmodels;
 
 import com.example.systemprogramm.controllermodels.Controller;
-import com.example.systemprogramm.controllermodels.analyzer.MyException;
+import com.example.systemprogramm.controllermodels.analyzer.AnalyzeException;
 import com.example.systemprogramm.controllermodels.file.FileType;
 import com.example.systemprogramm.controllermodels.file.MyDate;
 import com.example.systemprogramm.controllermodels.file.record.*;
@@ -66,6 +66,8 @@ public class WindowView extends Application implements View {
     private TextField textFieldSecondValue;
     @FXML
     private Label resultLowLevelFunction;
+    @FXML
+    private TextArea logArea;
 
 
     @Override
@@ -131,6 +133,17 @@ public class WindowView extends Application implements View {
         fileColumn1.setCellFactory(TextFieldTableCell.forTableColumn());
         fileColumn2.setCellFactory(TextFieldTableCell.forTableColumn());
         fileColumn3.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        textFieldFirstValue.textProperty().addListener(((observableValue, oldValue, newValue) -> {
+            if (!newValue.matches("0?([1-9]\\d*)?")) {
+                textFieldFirstValue.setText(oldValue);
+            }
+        }));
+        textFieldSecondValue.textProperty().addListener(((observableValue, oldValue, newValue) -> {
+            if (!newValue.matches("0?([1-9]\\d*)?")) {
+                textFieldSecondValue.setText(oldValue);
+            }
+        }));
     }
 
     @FXML
@@ -189,96 +202,116 @@ public class WindowView extends Application implements View {
     }
 
     @FXML
-    private void editRecord(TableColumn.CellEditEvent<Record, String> cellEditEvent) throws ParseException {
-        String data = cellEditEvent.getNewValue();
-        Record record = cellEditEvent.getRowValue();
-        if (fileColumn1 == cellEditEvent.getTableColumn()) {
-            switch (whichVariantSelected()) {
-                case JSON -> ((RecordJSON) record).setFilePath(data);
-                case CSV -> ((RecordCSV) record).setAddress(data);
-                case XML -> ((RecordXML) record).setFilePath(data);
-            }
-        } else if (fileColumn2 == cellEditEvent.getTableColumn()) {
+    private void editRecord(TableColumn.CellEditEvent<Record, String> cellEditEvent) {
+        try {
+            String data = cellEditEvent.getNewValue();
+            Record record = cellEditEvent.getRowValue();
+            if (fileColumn1 == cellEditEvent.getTableColumn()) {
+                switch (whichVariantSelected()) {
+                    case JSON -> ((RecordJSON) record).setFilePath(data);
+                    case CSV -> ((RecordCSV) record).setAddress(data);
+                    case XML -> ((RecordXML) record).setFilePath(data);
+                }
+            } else if (fileColumn2 == cellEditEvent.getTableColumn()) {
 
-            switch (whichVariantSelected()) {
-                case JSON -> ((RecordJSON) record).setKByteSize(Integer.parseInt(data));
-                case CSV -> ((RecordCSV) record).setAccessMode(data);
-                case XML -> ((RecordXML) record).setMByteFileSize(Double.parseDouble(data));
+                switch (whichVariantSelected()) {
+                    case JSON -> ((RecordJSON) record).setKByteSize(Integer.parseInt(data));
+                    case CSV -> {
+                        if (data.equals("Свободный") || data.equals("Закрытый"))
+                            ((RecordCSV) record).setAccessMode(data);
+                        else throw new AnalyzeException("Значения могут быть только 'Свободный' или 'Закрытый'");
+                    }
+                    case XML -> ((RecordXML) record).setMByteFileSize(Double.parseDouble(data));
+                }
+            } else if (fileColumn3 == cellEditEvent.getTableColumn()) {
+                switch (whichVariantSelected()) {
+                    case JSON -> ((RecordJSON) record).setDateOfCreate(MyDate.parse(data));
+                    case CSV -> ((RecordCSV) record).setAccessDate(MyDate.parse(data));
+                    case XML -> ((RecordXML) record).setLastEditing(MyDate.parse(data));
+                }
             }
-        } else if (fileColumn3 == cellEditEvent.getTableColumn()) {
-            switch (whichVariantSelected()) {
-                case JSON -> ((RecordJSON) record).setDateOfCreate(MyDate.parse(data));
-                case CSV -> ((RecordCSV) record).setAccessDate(MyDate.parse(data));
-                case XML -> ((RecordXML) record).setLastEditing(MyDate.parse(data));
-            }
+            controller.editRecord(record, cellEditEvent.getTablePosition().getRow());
+        } catch (ParseException | AnalyzeException e) {
+            logArea.appendText("Error: " + e.getMessage() + "\n");
+            AlertWindow.showAlert(e.getMessage());
         }
-        controller.editRecord(record, cellEditEvent.getTablePosition().getRow());
         update();
     }
 
     @FXML
-    private void addRecord() throws Exception {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Добавить запись о файле");
-        switch (whichVariantSelected()) {
-            case JSON:
-                File file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                BasicFileAttributes attribute = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(attribute.creationTime().toMillis());
-                controller.addRecord(new RecordJSON(file.getPath(),
-                        (int) file.length() / 1000,
-                        new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR)))
-                );
-                break;
-            case CSV:
-                AddRecordWindow arw = new AddRecordWindow(controller);
-                arw.start(newWindow("add-record-window.fxml", "Добавить запись"));
-                break;
-            case XML:
-                file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(file.lastModified());
-                controller.addRecord(new RecordXML(file.getPath(),
-                        (double) file.length() / 1000000,
-                        new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
-                break;
+    private void addRecord() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Добавить запись о файле");
+            switch (whichVariantSelected()) {
+                case JSON:
+                    File file = fileChooser.showOpenDialog(new Stage());
+                    if (file == null) return;
+                    BasicFileAttributes attribute = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(attribute.creationTime().toMillis());
+                    controller.addRecord(new RecordJSON(file.getPath(),
+                            (int) file.length() / 1000,
+                            new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR)))
+                    );
+                    break;
+                case CSV:
+                    AddRecordWindow arw = new AddRecordWindow(controller);
+                    arw.start(newWindow("add-record-window.fxml", "Добавить запись"));
+                    break;
+                case XML:
+                    file = fileChooser.showOpenDialog(new Stage());
+                    if (file == null) return;
+                    calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(file.lastModified());
+                    controller.addRecord(new RecordXML(file.getPath(),
+                            (double) file.length() / 1000000,
+                            new MyDate(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR))));
+                    break;
+            }
+            update();
+        } catch (Exception e) {
+            logArea.appendText("Error: " + e.getMessage() + "\n");
+            AlertWindow.showAlert(e.getMessage());
         }
-        update();
     }
 
     @FXML
     private void openFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Открыть файл с записями");
-        File file = null;
-        switch (whichVariantSelected()) {
-            case JSON -> {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
-                file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                controller.load(file, FileType.JSON);
+        try {
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Открыть файл с записями");
+            File file = null;
+            switch (whichVariantSelected()) {
+                case JSON -> {
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+                    file = fileChooser.showOpenDialog(new Stage());
+                    if (file == null) return;
+                    controller.load(file, FileType.JSON);
+                }
+                case CSV -> {
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
+                    file = fileChooser.showOpenDialog(new Stage());
+                    if (file == null) return;
+                    controller.load(file, FileType.CSV);
+                }
+                case XML -> {
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
+                    file = fileChooser.showOpenDialog(new Stage());
+                    if (file == null) return;
+                    controller.load(file, FileType.XML);
+                }
             }
-            case CSV -> {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
-                file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                controller.load(file, FileType.CSV);
-            }
-            case XML -> {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
-                file = fileChooser.showOpenDialog(new Stage());
-                if (file == null) return;
-                controller.load(file, FileType.XML);
-            }
+            fileMenuButton.getItems().get(1).setVisible(true);
+            fileMenuButton.getItems().get(3).setVisible(true);
+            fileMenuButton.getItems().get(4).setVisible(true);
+            currentFile = file;
+            update();
+        } catch (Throwable e) {
+            logArea.appendText("Error: " + e.getMessage() + "\n");
+            AlertWindow.showAlert(e.getMessage());
         }
-        fileMenuButton.getItems().get(1).setVisible(true);
-        fileMenuButton.getItems().get(3).setVisible(true);
-        fileMenuButton.getItems().get(4).setVisible(true);
-        currentFile = file;
-        update();
     }
 
     @FXML
@@ -292,30 +325,35 @@ public class WindowView extends Application implements View {
 
     @FXML
     private void saveFileAs() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Сохранить как");
-        switch (whichVariantSelected()) {
-            case JSON -> {
-                fileChooser.setInitialFileName("Записи.json");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
-                File file = fileChooser.showSaveDialog(new Stage());
-                if (file == null) return;
-                controller.save(file, FileType.JSON);
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Сохранить как");
+            switch (whichVariantSelected()) {
+                case JSON -> {
+                    fileChooser.setInitialFileName("Записи.json");
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+                    File file = fileChooser.showSaveDialog(new Stage());
+                    if (file == null) return;
+                    controller.save(file, FileType.JSON);
+                }
+                case CSV -> {
+                    fileChooser.setInitialFileName("Записи.csv");
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
+                    File file = fileChooser.showSaveDialog(new Stage());
+                    if (file == null) return;
+                    controller.save(file, FileType.CSV);
+                }
+                case XML -> {
+                    fileChooser.setInitialFileName("Записи.xml");
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
+                    File file = fileChooser.showSaveDialog(new Stage());
+                    if (file == null) return;
+                    controller.save(file, FileType.XML);
+                }
             }
-            case CSV -> {
-                fileChooser.setInitialFileName("Записи.csv");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV", "*.csv"));
-                File file = fileChooser.showSaveDialog(new Stage());
-                if (file == null) return;
-                controller.save(file, FileType.CSV);
-            }
-            case XML -> {
-                fileChooser.setInitialFileName("Записи.xml");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
-                File file = fileChooser.showSaveDialog(new Stage());
-                if (file == null) return;
-                controller.save(file, FileType.XML);
-            }
+        } catch (Throwable e) {
+            logArea.appendText("Error: " + e.getMessage() + "\n");
+            AlertWindow.showAlert(e.getMessage());
         }
     }
 
@@ -358,7 +396,7 @@ public class WindowView extends Application implements View {
                     }
                 }
             }
-        } catch (MyException e) {
+        } catch (AnalyzeException e) {
             AlertWindow.showAlert(e.getMessage());
         }
     }
@@ -391,16 +429,22 @@ public class WindowView extends Application implements View {
     @FXML
     private void doAction(ActionEvent event) {
         try {
-
             switch (((SplitMenuButton) event.getSource()).getText()) {
-                case "+" -> resultLowLevelFunction.setText("Результат: " +
-                        LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText())));
-                case "/" -> resultLowLevelFunction.setText("Результат: " +
-                        LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText())));
+                case "+" -> {
+                    int result = LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
+                    if (result == 0 && !textFieldFirstValue.getText().equals("0"))
+                        throw new ArithmeticException("Слишком большое число!");
+                    resultLowLevelFunction.setText(result + "");
+                }
+                case "/" -> {
+                    if (textFieldSecondValue.getText().equals("0")) throw new ArithmeticException("Деление на 0");
+                    else resultLowLevelFunction.setText("" +
+                            LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText())));
+                }
             }
-        } catch (Throwable e) {
+        } catch (RuntimeException e) {
+            logArea.appendText("Error: " + e.getMessage() + "\n");
             AlertWindow.showAlert(e.getMessage());
         }
     }
-
 }

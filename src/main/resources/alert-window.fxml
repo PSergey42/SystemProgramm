@@ -6,10 +6,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="115.0" prefWidth="392.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.windows.AlertWindow">
    <children>
-      <Label fx:id="label" layoutX="14.0" layoutY="14.0" text="Label" />
+      <Label fx:id="label" alignment="TOP_LEFT" layoutX="14.0" layoutY="14.0" prefHeight="93.0" prefWidth="261.0" text="Label" wrapText="true" />
       <Button layoutX="279.0" layoutY="70.0" mnemonicParsing="false" onAction="#clickOk" prefHeight="37.0" prefWidth="62.0" text="ОК">
          <font>
             <Font size="16.0" />
