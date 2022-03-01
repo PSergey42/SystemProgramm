@@ -680,6 +680,11 @@ public class WindowView extends Application implements View {
         return stage;
     }
 
+    /**
+     * Метод для вывода сообщения в логах
+     *
+     * @param message текст действия пользователя
+     */
     private void printLog(String message) {
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
         SimpleDateFormat currentDate = new SimpleDateFormat("'['hh:mm:ss']: '");

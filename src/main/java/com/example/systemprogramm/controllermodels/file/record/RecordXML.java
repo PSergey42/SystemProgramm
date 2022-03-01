@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -27,7 +26,7 @@ public class RecordXML implements Record {
     @Id
     @Column(name = "file_path")
     private String filePath;
-    @Column(name = "m_byte_file_path")
+    @Column(name = "m_byte_file_size")
     private double mByteFileSize;
     @Column(name = "mydate")
     private Date lastEditing;
@@ -40,6 +39,7 @@ public class RecordXML implements Record {
         this.mByteFileSize = mByteFileSize;
         this.lastEditing = lastEditing;
     }
+
 
     @XmlAttribute
     public String getFilePath() {

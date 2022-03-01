@@ -11,6 +11,9 @@ import com.example.systemprogramm.controllermodels.file.record.Record;
 
 import java.util.List;
 
+/**
+ * Класс, работающий с базай дынных
+ */
 public class DAO {
     /**
      * Метод для получения записи по id
@@ -57,6 +60,10 @@ public class DAO {
         session.close();
     }
 
+    /**
+     * Метод для удаления записи
+     * @param record запись, которую надо удалить
+     */
     public void delete(Record record) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
@@ -65,6 +72,11 @@ public class DAO {
         session.close();
     }
 
+    /**
+     * Метод для получения списка записей
+     * @param type тип файла
+     * @return список записей
+     */
     public List<Record> findAll(FileType type) {
         switch (type) {
             case CSV -> {

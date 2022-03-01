@@ -8,13 +8,20 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-
+/**
+ *
+ * Класс для работы с Hibernate
+ */
 public final class HibernateUtil {
     private static SessionFactory sessionFactory;
 
     private HibernateUtil() {
     }
 
+    /**
+     * Метод, который подключается к базе данных
+     * @return сейсия для запросов в бд
+     */
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {

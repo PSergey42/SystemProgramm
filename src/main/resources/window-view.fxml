@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1070.0" prefHeight="596.0" prefWidth="1070.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
+<Pane maxHeight="596.0" maxWidth="1076.0" minHeight="596.0" minWidth="1070.0" prefHeight="596.0" prefWidth="1070.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.systemprogramm.viewmodels.WindowView">
    <children>
       <TabPane layoutY="3.0" prefHeight="590.0" prefWidth="755.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -84,7 +97,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label alignment="TOP_LEFT" layoutX="26.0" layoutY="285.0" prefHeight="198.0" prefWidth="224.0" text="Разделить ондо значение &#10;на другое">
+                        <Label alignment="TOP_LEFT" layoutX="26.0" layoutY="285.0" prefHeight="198.0" prefWidth="224.0" text="Разделить одно значение &#10;на другое">
                            <font>
                               <Font size="18.0" />
                            </font>

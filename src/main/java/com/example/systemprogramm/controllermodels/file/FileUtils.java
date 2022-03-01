@@ -17,6 +17,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+/**
+ * Класс для работы с файлами
+ */
 public class FileUtils implements MyFile {
     /**
      *

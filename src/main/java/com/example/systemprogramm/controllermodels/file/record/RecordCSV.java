@@ -3,6 +3,11 @@ package com.example.systemprogramm.controllermodels.file.record;
 import javax.persistence.*;
 import java.sql.Date;
 
+/**
+ * Класс реализует интерфейс Record
+ * Представляет данные в формате CSV
+ * @see Record
+ */
 @Entity
 @Table (name = "mycsv")
 public class RecordCSV implements Record {

@@ -20,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
+/**
+ * Класс отвечающий за добавление новой записи
+ */
 public class AddRecordWindow extends Window {
 
     private static Controller controller;
@@ -55,6 +58,9 @@ public class AddRecordWindow extends Window {
         comboBoxAccess.getItems().add("Закрытый");
     }
 
+    /**
+     * Метод для добавления записи
+     */
     @FXML
     private void addRecord(ActionEvent event) {
         try {
@@ -74,6 +80,10 @@ public class AddRecordWindow extends Window {
         }
     }
 
+    /**
+     * Метод для вывода сообщения в логах
+     * @param message текст действия пользователя
+     */
     private void printLog(String message) {
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
         SimpleDateFormat currentDate = new SimpleDateFormat("'['hh:mm:ss']: '");

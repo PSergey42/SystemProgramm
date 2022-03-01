@@ -67,6 +67,11 @@ public class ControllerModel implements Controller {
         return fileUtils.getRecord(index);
     }
 
+    /**
+     * Метод для сохрания файла
+     * @param saveFile файл, который надо сохранить
+     * @param fileType тип файла
+     */
     public void save(File saveFile, FileType fileType) {
         fileUtils.save(saveFile, fileType);
     }
@@ -81,10 +86,18 @@ public class ControllerModel implements Controller {
         view.update();
     }
 
+    /**
+     * Метод для анализа строки с if
+     * @param s строка, которую надо проанализировать
+     */
     public String analyzeIf(String s) {
         return Analyzer.analyze2(s);
     }
 
+    /**
+     * Метод для анализа строки с while
+     * @param s строка, которую надо проанализировать
+     */
     public boolean analyzeWhile(String s) {
         return Analyzer.analyze(s);
     }
