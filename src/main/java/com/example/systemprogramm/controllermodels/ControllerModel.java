@@ -11,7 +11,6 @@ import java.util.List;
 
 public class ControllerModel implements Controller {
     private FileUtils fileUtils;
-    private Analyzer analyzer;
     private View view;
     private static ControllerModel instance;
 
@@ -22,25 +21,31 @@ public class ControllerModel implements Controller {
         if (instance != null) return instance;
         instance = new ControllerModel();
         instance.fileUtils = new FileUtils();
-        instance.analyzer = new Analyzer();
         instance.view = view;
         view.setController(instance);
         return instance;
     }
 
-    public static ControllerModel getInstance(){
+    public static ControllerModel getInstance() {
         return instance;
     }
 
-    public void addRecord(Record record){
+    @Override
+    public void addRecord(Record record) {
         fileUtils.addRecord(record);
     }
 
-    public void deleteRecord(int index){
+    @Override
+    public void deleteRecord(Record deleteRecord) {
+        int index = 0;
+        while(!fileUtils.getRecord(index).equals(deleteRecord)){
+            index++;
+        }
         fileUtils.deleteRecord(index);
     }
 
-    public void editRecord(Record newRecord, int index){
+    @Override
+    public void editRecord(Record newRecord, int index) {
         fileUtils.setRecord(newRecord, index);
     }
 
@@ -50,20 +55,23 @@ public class ControllerModel implements Controller {
     }
 
     @Override
+    public Record getRecord(int index, FileType fileType) {
+        return fileUtils.getRecord(index);
+    }
+
     public void save(File saveFile, FileType fileType) {
         fileUtils.save(saveFile, fileType);
     }
 
-    @Override
     public void load(File loadFile, FileType fileType) {
         fileUtils.load(loadFile, fileType);
     }
 
-    @Override
-    public String analyzeIf(String s){
+    public String analyzeIf(String s) {
         return Analyzer.analyze2(s);
     }
-    public boolean analyzeWhile(String s){
+
+    public boolean analyzeWhile(String s) {
         return Analyzer.analyze(s);
     }
 }

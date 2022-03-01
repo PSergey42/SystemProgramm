@@ -59,11 +59,11 @@ public class AddRecordWindow extends Window {
     private void addRecord(ActionEvent event) {
         try {
             if (!textFieldAddress.getText().isEmpty() && !textFieldDateAccess.getText().isEmpty()) {
-                controller.addRecord(new RecordCSV(textFieldAddress.getText(),
+                Record addRecord = new RecordCSV(textFieldAddress.getText(),
                         comboBoxAccess.getValue(),
-                        Record.parse(textFieldDateAccess.getText()))
-                );
-                printLog("Запись " + controller.getRecords().get(controller.getRecords().size() - 1) + " успешно добавлена");
+                        Record.parse(textFieldDateAccess.getText()));
+                controller.addRecord( addRecord);
+                printLog("Запись " + addRecord + " успешно добавлена");
                 ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
             } else{
                 AlertWindow.showAlert("Некоторые поля пустые!");

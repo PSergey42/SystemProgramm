@@ -28,7 +28,7 @@ public class DAO {
         return null;
     }
 
-    public void save(Record record) {
+    public void add(Record record) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
         session.save(record);

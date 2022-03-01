@@ -8,11 +8,8 @@ import java.util.List;
 
 public interface Controller {
     void addRecord(Record record);
-    void deleteRecord(int index);
+    void deleteRecord(Record record);
     void editRecord(Record newRecord, int index);
     List<Record> getRecords();
-    void save(File saveFile, FileType fileType);
-    void load(File loadFile, FileType fileType);
-    String analyzeIf(String s);
-    boolean analyzeWhile(String s);
+    Record getRecord(int index, FileType fileType);
 }
