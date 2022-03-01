@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
@@ -103,7 +104,7 @@ public class WindowView extends Application implements View {
     public void update() {
         if (workWithFile.isSelected()) {
             tableReocrds.getItems().clear();
-            tableReocrds.getItems().addAll(controller.getRecords());
+            tableReocrds.getItems().addAll(controller.getRecords(whichVariantSelected()));
         } else if (workWithDB.isSelected()) {
             tableReocrdsDB.getItems().clear();
             tableReocrdsDB.getItems().addAll(dataBaseController.getRecords(whichVariantSelected()));
@@ -115,6 +116,11 @@ public class WindowView extends Application implements View {
         WindowView.controller = controller;
     }
 
+    /**
+     * Метод для задания контроллера, который будет взаимодействовать с базой данных
+     *
+     * @param dataBaseController контроллер, взаимодействующий с базой данных
+     */
     public void setDataBaseController(DataBaseController dataBaseController) {
         WindowView.dataBaseController = dataBaseController;
     }
@@ -132,22 +138,29 @@ public class WindowView extends Application implements View {
         stage.show();
     }
 
+    /**
+     * Метод, выполняющий начальные действия при запуске приложения
+     */
     @FXML
     void initialize() {
         instance = this;
+        controller.setView(this);
+        dataBaseController.setView(this);
         //Работа с файлом
         fileMenuButton.setDisable(true);
+        //Скрываем кнопки взаимодействия с записями, пока не будет открыт какой-либо файл
         fileMenuButton.getItems().get(1).setVisible(false);
         fileMenuButton.getItems().get(2).setVisible(false);
         fileMenuButton.getItems().get(4).setVisible(false);
         fileMenuButton.getItems().get(5).setVisible(false);
 
-        test(tableReocrds, controller, fileColumn1, fileColumn2, fileColumn3);
+        init(tableReocrds, controller, fileColumn1, fileColumn2, fileColumn3);
         //База данных
         fileMenuButtonDB.setDisable(true);
+        //Скрываем кнопки взаимодействия с записями, пока не будет выбрана хотя бы одна таблица
         fileMenuButtonDB.getItems().get(0).setVisible(false);
         fileMenuButtonDB.getItems().get(1).setVisible(false);
-        test(tableReocrdsDB, dataBaseController, fileColumn1DB, fileColumn2DB, fileColumn3DB);
+        init(tableReocrdsDB, dataBaseController, fileColumn2DB, fileColumn3DB);
 
         textFieldFirstValue.textProperty().addListener(((observableValue, oldValue, newValue) -> {
             if (!newValue.matches("0?([1-9]\\d*)?")) {
@@ -161,8 +174,16 @@ public class WindowView extends Application implements View {
         }));
     }
 
+    /**
+     * Метод, задающий удаление записи при клике правой кнопкой мыши по заданной таблице
+     * Также инициализирует ячейки столбцов как TextField, чтобы их можно было редактировать
+     *
+     * @param tableReocrds таблица, для которой необходимо задать этот функционал
+     * @param controller   контроллер, который будет выполнять удаление записи
+     * @param fileColumns  столбцы, которые должны быть изменяемыми
+     */
     @SafeVarargs
-    private void test(TableView<Record> tableReocrds, Controller controller, TableColumn<Record, String>... fileColumns) {
+    private void init(TableView<Record> tableReocrds, Controller controller, TableColumn<Record, String>... fileColumns) {
         ContextMenu cm = new ContextMenu();
         MenuItem item = new MenuItem("Удалить запись");
         item.setOnAction(p -> deleteRecord(tableReocrds, controller));
@@ -176,6 +197,7 @@ public class WindowView extends Application implements View {
         });
         for (TableColumn<Record, String> fileColumn : fileColumns) {
             fileColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            fileColumn.setEditable(true);
         }
     }
 
@@ -189,17 +211,23 @@ public class WindowView extends Application implements View {
         try {
             printLog("Соединение с базой данных...");
             fileVariantClick(mouseEvent, tableReocrdsDB, fileColumn1DB, fileColumn2DB, fileColumn3DB, buttonFileJSONDB, buttonFileCSVDB, buttonFileXMLDB, labelFileVariantDB, fileMenuButtonDB);
+            update();
             printLog("Соединение с базой данных успешно установлено!");
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             printLog("Соединение с базой данных перервано!");
             printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
     }
 
+    /**
+     *
+     */
     private void fileVariantClick(MouseEvent mouseEvent, TableView<Record> tableReocrds, TableColumn<Record, String> fileColumn1, TableColumn<Record, String> fileColumn2, TableColumn<Record, String> fileColumn3, ToggleButton buttonFileJSON, ToggleButton buttonFileCSV, ToggleButton buttonFileXML, Label labelFileVariant, MenuButton fileMenuButton) {
         if (mouseEvent.getButton() == MouseButton.PRIMARY) {
             tableReocrds.getItems().clear();
+            //Определяем с каким типо файла работать и выполняем необходимые для него приготовления
+            //То есть настраиваем столбцы таблицы
             switch (((ToggleButton) mouseEvent.getSource()).getText()) {
                 case "JSON" -> {
                     fileColumn1.setText("Путь к файлу");
@@ -208,12 +236,12 @@ public class WindowView extends Application implements View {
                     fileColumn1.setCellValueFactory(new PropertyValueFactory<>("filePath"));
                     fileColumn2.setCellValueFactory(p -> new SimpleStringProperty(Integer.toString(((RecordJSON) p.getValue()).getKByteSize())));
                     fileColumn3.setCellValueFactory(p -> new SimpleStringProperty(((RecordJSON) p.getValue()).getDateOfCreate().toString()));
-                    buttonFileJSON.setSelected(true);
-                    buttonFileCSV.setSelected(false);
-                    buttonFileXML.setSelected(false);
                     labelFileVariant.setText("Формат файла: JSON.\n\nВводимые данные:\n" +
                             "Запись о файле:\nпуть к файлу, размер файла в килобайтах, дата создания файла.\n\n" +
                             "Для добавления новой записи необходимо указать файл на компьютере.");
+                    buttonFileJSON.setSelected(true);
+                    buttonFileCSV.setSelected(false);
+                    buttonFileXML.setSelected(false);
                 }
                 case "CSV" -> {
                     fileColumn1.setText("Адрес");
@@ -245,6 +273,7 @@ public class WindowView extends Application implements View {
                 }
             }
             fileMenuButton.setDisable(false);
+            //Скрываем кнопки взаимодействия с записями
             if (fileMenuButton.getItems().size() > 2) {
                 fileMenuButton.getItems().get(1).setVisible(false);
                 fileMenuButton.getItems().get(2).setVisible(false);
@@ -253,7 +282,6 @@ public class WindowView extends Application implements View {
             } else {
                 fileMenuButton.getItems().get(0).setVisible(true);
                 fileMenuButton.getItems().get(1).setVisible(true);
-                update();
             }
         }
     }
@@ -268,19 +296,26 @@ public class WindowView extends Application implements View {
         editRecord(cellEditEvent, fileColumn1DB, fileColumn2DB, fileColumn3DB, dataBaseController);
     }
 
+    /**
+     * Метод, редактирующий запись в заданной таблице и контроллере
+     *
+     * @param controller контроллер, который совершит изменения
+     */
     private void editRecord(TableColumn.CellEditEvent<Record, String> cellEditEvent, TableColumn<Record, String> fileColumn1, TableColumn<Record, String> fileColumn2, TableColumn<Record, String> fileColumn3, Controller controller) {
         try {
             String data = cellEditEvent.getNewValue();
             Record record = cellEditEvent.getRowValue();
             Record oldValue = record.clone();
+            //Определяем в каком столбце сделано изменение
             if (fileColumn1 == cellEditEvent.getTableColumn()) {
+                //Определяем в каком типе файла было сделано изменение и совершаем его
                 switch (whichVariantSelected()) {
                     case JSON -> ((RecordJSON) record).setFilePath(data);
                     case CSV -> ((RecordCSV) record).setAddress(data);
                     case XML -> ((RecordXML) record).setFilePath(data);
                 }
             } else if (fileColumn2 == cellEditEvent.getTableColumn()) {
-
+                //Определяем в каком типе файла было сделано изменение и совершаем его
                 switch (whichVariantSelected()) {
                     case JSON -> ((RecordJSON) record).setKByteSize(Integer.parseInt(data));
                     case CSV -> {
@@ -291,6 +326,7 @@ public class WindowView extends Application implements View {
                     case XML -> ((RecordXML) record).setMByteFileSize(Double.parseDouble(data));
                 }
             } else if (fileColumn3 == cellEditEvent.getTableColumn()) {
+                //Определяем в каком типе файла было сделано изменение и совершаем его
                 switch (whichVariantSelected()) {
                     case JSON -> ((RecordJSON) record).setDateOfCreate(Record.parse(data));
                     case CSV -> ((RecordCSV) record).setAccessDate(Record.parse(data));
@@ -299,7 +335,6 @@ public class WindowView extends Application implements View {
             }
             controller.editRecord(record, cellEditEvent.getTablePosition().getRow());
             printLog("Запись " + oldValue + " успешно изменена на " + record);
-            update();
         } catch (RuntimeException e) {
             printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
@@ -316,10 +351,16 @@ public class WindowView extends Application implements View {
         addRecord(dataBaseController);
     }
 
+    /**
+     * Метод, добавляющий запись в заданном контроллере
+     *
+     * @param controller контроллер, который добавит запись
+     */
     private void addRecord(Controller controller) {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Добавить запись о файле");
+            //Определяем в каком тип файла добавить запись
             switch (whichVariantSelected()) {
                 case JSON:
                     File file = fileChooser.showOpenDialog(new Stage());
@@ -349,7 +390,6 @@ public class WindowView extends Application implements View {
                     printLog("Запись " + addRecord + " успешно добавлена");
                     break;
             }
-            update();
         } catch (Exception e) {
             printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
@@ -366,21 +406,32 @@ public class WindowView extends Application implements View {
         deleteRecord(tableReocrdsDB, dataBaseController);
     }
 
+    /**
+     * Метод, удаляющий запись из заданной таблицы заданным контроллером
+     *
+     * @param tableReocrds таблица, из котороый будет удалена запись
+     * @param controller   контроллер, который удалит запись
+     */
     private void deleteRecord(TableView<Record> tableReocrds, Controller controller) {
         if (tableReocrds.getSelectionModel().getSelectedIndex() > -1) {
             Record deleteRecord = tableReocrds.getSelectionModel().getSelectedItem();
             controller.deleteRecord(deleteRecord);
             printLog("Запись " + deleteRecord + " успешно удалена");
-            update();
         }
     }
 
+    /**
+     * Метод, который открывает файл с записями
+     *
+     * @see Record
+     */
     @FXML
     private void openFile() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Открыть файл с записями");
             File file = null;
+            //Определяем какой тип файла откроется
             switch (whichVariantSelected()) {
                 case JSON -> {
                     fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
@@ -401,19 +452,22 @@ public class WindowView extends Application implements View {
                     ((ControllerModel) controller).load(file, FileType.XML);
                 }
             }
+            //Открываем кнопки для взаимодейсвтия с записями
             fileMenuButton.getItems().get(1).setVisible(true);
             fileMenuButton.getItems().get(2).setVisible(true);
             fileMenuButton.getItems().get(4).setVisible(true);
             fileMenuButton.getItems().get(5).setVisible(true);
             currentFile = file;
             printLog("Файл " + currentFile.getAbsolutePath() + " успешно открыт");
-            update();
         } catch (Throwable e) {
             printLog("Error: " + e.getMessage());
             AlertWindow.showAlert(e.getMessage());
         }
     }
 
+    /**
+     * Метод, сохраняющий данные в текущий файл
+     */
     @FXML
     private void save() {
         switch (whichVariantSelected()) {
@@ -424,6 +478,10 @@ public class WindowView extends Application implements View {
         printLog("Файл " + currentFile.getName() + " сохранён");
     }
 
+    /**
+     * Метод, сохраняющие данные в выбранный файл
+     * Возвращается, если не выбран ни один файл
+     */
     @FXML
     private void saveFileAs() {
         try {
@@ -459,6 +517,9 @@ public class WindowView extends Application implements View {
         }
     }
 
+    /**
+     * Метод, создающий новый файл
+     */
     @FXML
     private void createNewFile() {
         try {
@@ -467,24 +528,24 @@ public class WindowView extends Application implements View {
                     currentFile = new File("test.json");
                     if (currentFile.exists()) {
                         currentFile.delete();
-                        currentFile.createNewFile();
                     }
+                    currentFile.createNewFile();
                     ((ControllerModel) controller).load(currentFile, FileType.JSON);
                 }
                 case CSV -> {
                     currentFile = new File("test1.csv");
                     if (currentFile.exists()) {
                         currentFile.delete();
-                        currentFile.createNewFile();
                     }
+                    currentFile.createNewFile();
                     ((ControllerModel) controller).load(currentFile, FileType.CSV);
                 }
                 case XML -> {
                     currentFile = new File("test2.xml");
                     if (currentFile.exists()) {
                         currentFile.delete();
-                        currentFile.createNewFile();
                     }
+                    currentFile.createNewFile();
                     ((ControllerModel) controller).load(currentFile, FileType.XML);
                 }
             }
@@ -500,6 +561,10 @@ public class WindowView extends Application implements View {
         }
     }
 
+    /**
+     * Метод, запускающий анализ синтаксиса
+     * @param event событие, черезе которое определеяем какая кнопка нажата
+     */
     @FXML
     private void analyze(ActionEvent event) {
         try {
@@ -536,24 +601,41 @@ public class WindowView extends Application implements View {
         actionLowLevelFunction.setText("/");
     }
 
+    /**
+     * Метод, выполняющий вычисление на языке низкого уровня
+     * @see LowLevelFunction
+     * @param event событие, через которое определяем какое действие выполнить (+,/)
+     */
     @FXML
     private void doAction(ActionEvent event) {
         try {
             int result;
             switch (((SplitMenuButton) event.getSource()).getText()) {
                 case "+" -> {
-                    result = LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
-                    if (result == 0 && !textFieldFirstValue.getText().equals("0"))
-                        throw new ArithmeticException("Слишком большое число!");
-                    resultLowLevelFunction.setText(result + "");
-                    printLog("Результатом сложения является: " + result);
+                    try {
+                        result = LowLevelFunction.addWithOverflowCheck(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
+                        if (result == 0 && !textFieldFirstValue.getText().equals("0"))
+                            throw new ArithmeticException("Слишком большое число!");
+                        resultLowLevelFunction.setText(result + "");
+                        printLog("Результатом сложения является: " + result);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Слишком большое число!");
+                    }
                 }
                 case "/" -> {
-                    if (textFieldSecondValue.getText().equals("0")) throw new ArithmeticException("Деление на 0");
-                    else {
-                        result = LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
-                        resultLowLevelFunction.setText("" + result);
-                        printLog("Результатом деления является: " + result);
+                    try {
+                        if (textFieldSecondValue.getText().equals("0")) throw new ArithmeticException("Деление на 0");
+                        else {
+                            try {
+                            result = LowLevelFunction.div(Integer.parseInt(textFieldFirstValue.getText()), Integer.parseInt(textFieldSecondValue.getText()));
+                            resultLowLevelFunction.setText("" + result);
+                            printLog("Результатом деления является: " + result);
+                            } catch (Exception e) {
+                                throw new RuntimeException("Слишком большое число!");
+                            }
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException("Слишком большое число!");
                     }
                 }
             }
@@ -563,6 +645,10 @@ public class WindowView extends Application implements View {
         }
     }
 
+    /**
+     * Метод, который возвращает тип файла, с которым мы работаем в данный момент
+     * @return тип файла, с которым мы работаем в данный момент, иначе генерируется RuntimeException
+     */
     private FileType whichVariantSelected() {
         if (workWithFile.isSelected()) {
             return whichVariantSelected(buttonFileJSON, buttonFileCSV, buttonFileXML);
@@ -579,6 +665,13 @@ public class WindowView extends Application implements View {
         throw new RuntimeException("Не выбран ни один из вариантов!");
     }
 
+    /**
+     * Метод, возвращающий новое окно по заданному fxml-файлу и заданным названием окна
+     * @param fxml fxml-файл для создания окна
+     * @param title название окна
+     * @return Окно, загруженное по параметрам заданного fxml-файла
+     * @throws Exception ошибка, которая может возникнуть при загрузке fxml-файла
+     */
     private Stage newWindow(String fxml, String title) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(ClassLoader.getSystemClassLoader().getResource(fxml));
         Stage stage = new Stage();

@@ -9,13 +9,18 @@ import com.example.systemprogramm.viewmodels.View;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Класс-контроллер для взаимодействия с моделями, хранящимися в файле
+ * Также
+ * Реализует контроллер в паттерне MVC
+ * @see Controller
+ */
 public class ControllerModel implements Controller {
     private FileUtils fileUtils;
     private View view;
     private static ControllerModel instance;
 
-    private ControllerModel() {
-    }
+    private ControllerModel() {}
 
     public static ControllerModel getInstance(View view) {
         if (instance != null) return instance;
@@ -26,13 +31,14 @@ public class ControllerModel implements Controller {
         return instance;
     }
 
-    public static ControllerModel getInstance() {
-        return instance;
+    public void setView(View view){
+        this.view = view;
     }
 
     @Override
     public void addRecord(Record record) {
         fileUtils.addRecord(record);
+        view.update();
     }
 
     @Override
@@ -42,15 +48,17 @@ public class ControllerModel implements Controller {
             index++;
         }
         fileUtils.deleteRecord(index);
+        view.update();
     }
 
     @Override
     public void editRecord(Record newRecord, int index) {
         fileUtils.setRecord(newRecord, index);
+        view.update();
     }
 
     @Override
-    public List<Record> getRecords() {
+    public List<Record> getRecords(FileType fileType) {
         return fileUtils.getRecords();
     }
 
@@ -63,8 +71,14 @@ public class ControllerModel implements Controller {
         fileUtils.save(saveFile, fileType);
     }
 
+    /**
+     * Метод для загрузки файла
+     * @param loadFile файл, который надо загрузить
+     * @param fileType тип файла
+     */
     public void load(File loadFile, FileType fileType) {
         fileUtils.load(loadFile, fileType);
+        view.update();
     }
 
     public String analyzeIf(String s) {

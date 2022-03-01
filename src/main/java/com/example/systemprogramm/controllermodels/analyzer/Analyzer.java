@@ -2,6 +2,10 @@ package com.example.systemprogramm.controllermodels.analyzer;
 
 import java.util.*;
 
+/**
+ * Класс для проверки синтаксической конструции на принадлежность к циклу while или if
+ * и проверки выполнения их логических условий
+ */
 public class Analyzer {
 
     public static HashMap<String, Integer> intMap = new HashMap<>();
@@ -9,6 +13,12 @@ public class Analyzer {
     public static HashMap<String, String> stringMap = new HashMap<>();
     public static HashMap<String, Boolean> booleanMap = new HashMap<>();
 
+    /**
+     * Метод для проверки строки  строки на принадлежность к циклу while и проверки того выполнится ли он хотя бы раз
+     * @param mainString строка для анализа
+     * @return в случии если строка верна будет возвращено true для случая если код в цикле while выполнится хотя бы раз
+     *  и else в другом случае. Если строка не верна будет возвращен MyException с текстом ошибки
+     */
     public static boolean analyze(String mainString) {
         int i = 0;
         try {
@@ -33,6 +43,12 @@ public class Analyzer {
         }
     }
 
+    /**
+     * Метод для проверки строки  строки на принадлежность к конструкции if и проверки того какой блок выполнится
+     * @param mainString строка для анализа
+     * @return в случии если строка верна будет возвращена строка "if" если выполнится блок if
+     * else если выполнится блок else и null если ни один из блоков не будет выполнен. Если строка не верна будет возвращен MyException с текстом ошибки
+     */
     public static String analyze2(String mainString) {
         try {
             int i = 0;
@@ -361,10 +377,10 @@ public class Analyzer {
                     break;
                 }
                 default:
-                    throw new AnalyzeException("Выйди и зайди нормально");
+                    throw new AnalyzeException("Ошибка");
             }
         } catch (Throwable ex) {
-            throw new AnalyzeException("Ты что совсем тупой?");
+            throw new AnalyzeException("Ошибка");
         }
     }
 
@@ -404,7 +420,7 @@ public class Analyzer {
         for (String s : stringMap.keySet()) {
             System.out.println("Ключ - " + s + " Значение - " + stringMap.get(s));
         }
-        System.out.println("Булевы - хуюлевы>");
+        System.out.println("Булевы>");
         for (String s : booleanMap.keySet()) {
             System.out.println("Ключ - " + s + " Значение - " + booleanMap.get(s));
         }

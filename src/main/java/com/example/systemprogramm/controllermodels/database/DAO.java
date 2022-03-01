@@ -12,7 +12,12 @@ import com.example.systemprogramm.controllermodels.file.record.Record;
 import java.util.List;
 
 public class DAO {
-
+    /**
+     * Метод для получения записи по id
+     * @param id id записи
+     * @param type тип файла
+     * @return запись или null в случае провала поиска
+     */
     public Record findByAddress(String id, FileType type) {
         switch (type) {
             case CSV -> {
@@ -28,6 +33,10 @@ public class DAO {
         return null;
     }
 
+    /**
+     * Метод для добавления записи в базу данных
+     * @param record запись для добавления
+     */
     public void add(Record record) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();
@@ -36,6 +45,10 @@ public class DAO {
         session.close();
     }
 
+    /**
+     * Метод для замены записи в базе данных
+     * @param record Запись для замены
+     */
     public void update(Record record) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx1 = session.beginTransaction();

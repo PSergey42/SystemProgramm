@@ -4,6 +4,11 @@ import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс модели для взаимодействия с классами, реализующими интерфейс Record
+ * Реализует модель в паттерне MVC
+ * @see Record
+ */
 @XmlRootElement(name = "records")
 public class RecordModel {
     private List<Record> records;

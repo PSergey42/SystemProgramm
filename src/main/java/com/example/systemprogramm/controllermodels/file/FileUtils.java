@@ -18,7 +18,9 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 public class FileUtils implements MyFile {
-
+    /**
+     *
+     */
     private RecordModel recordModel;
     private final Type itemsListType = new TypeToken<List<RecordJSON>>() {}.getType();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -27,21 +29,38 @@ public class FileUtils implements MyFile {
         recordModel = new RecordModel();
     }
 
+    /**
+     * Метод для получения записи по индексу
+     * @param recordPos индекс записи
+     */
     @Override
     public Record getRecord(int recordPos) {
         return recordModel.getRecord(recordPos);
     }
 
+    /**
+     * Метод для получения всех записей
+     * @return Все записи из recordModel
+     */
     @Override
     public List<Record> getRecords() {
         return recordModel.getRecords();
     }
 
+    /**
+     * Метод для замены уже существующей записи
+     * @param newRecord новая запись
+     * @param recordPos индекс для замены
+     */
     @Override
     public void setRecord(Record newRecord, int recordPos) {
         recordModel.setRecord(newRecord, recordPos);
     }
 
+    /**
+     * Метод для добавления записи в recordModel
+     * @param newRecord Запись для добавления
+     */
     @Override
     public void addRecord(Record... newRecord) {
         for (Record record : newRecord) {
@@ -49,11 +68,20 @@ public class FileUtils implements MyFile {
         }
     }
 
+    /**
+     * Метод для удаления записи из recordModel по указанному индексу
+     * @param recordPos идекс элемента для удаления
+     */
     @Override
     public void deleteRecord(int recordPos) {
         recordModel.deleteRecord(recordPos);
     }
 
+    /**
+     * Метод для сохранения всех записей из recordModel в файл с указанным расширением
+     * @param saveFile путь к файлу
+     * @param fileType расширение файла
+     */
     @Override
     public void save(File saveFile, FileType fileType){
         try {
@@ -87,6 +115,12 @@ public class FileUtils implements MyFile {
         }
     }
 
+    /**
+     * Метод для загрузки данных из файла в переменную recordModel
+     * @param loadFile путь к файлу
+     * @param fileType расширение файла
+     */
+    @Override
     public void load(File loadFile, FileType fileType) {
         try (BufferedReader br = new BufferedReader(new FileReader(loadFile))) {
             List<Record> recordList = new ArrayList<>();

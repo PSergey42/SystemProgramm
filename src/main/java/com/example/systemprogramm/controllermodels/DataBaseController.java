@@ -7,6 +7,12 @@ import com.example.systemprogramm.viewmodels.View;
 
 import java.util.List;
 
+/**
+ * Класс-контроллер для взаимодействия с базой данных,
+ * которая хранит данные, реализующие интерфейс Record
+ * @see Controller
+ * @see Record
+ */
 public class DataBaseController implements Controller {
 
     private View view;
@@ -15,29 +21,41 @@ public class DataBaseController implements Controller {
     public DataBaseController() {
         dao = new DAO();
     }
+    public DataBaseController(View view) {
+        dao = new DAO();
+        this.view = view;
+    }
+
+    public void setView(View view){
+        this.view = view;
+    }
 
     @Override
     public void addRecord(Record record) {
         try {
             dao.add(record);
-        } catch (RuntimeException e){
+            view.update();
+        } catch (RuntimeException e) {
             dao.update(record);
+            view.update();
         }
     }
 
     @Override
     public void deleteRecord(Record record) {
         dao.delete(record);
+        view.update();
     }
 
     @Override
     public void editRecord(Record newRecord, int index) {
         dao.update(newRecord);
+        view.update();
     }
 
     @Override
-    public List<Record> getRecords() {
-        return null;
+    public List<Record> getRecords(FileType fileType) {
+        return dao.findAll(fileType);
     }
 
     @Override
@@ -49,7 +67,4 @@ public class DataBaseController implements Controller {
         return dao.findByAddress(id, fileType);
     }
 
-    public List<Record> getRecords(FileType fileType) {
-        return dao.findAll(fileType);
-    }
 }
