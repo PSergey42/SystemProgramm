@@ -1,10 +1,7 @@
 package com.example.systemprogramm.controllermodels;
 
-import com.example.systemprogramm.controllermodels.file.FileType;
-import com.example.systemprogramm.controllermodels.file.record.Record;
+import file.record.Record;
 import com.example.systemprogramm.viewmodels.View;
-
-import java.io.File;
 import java.util.List;
 
 public interface Controller {
@@ -31,14 +28,14 @@ public interface Controller {
      * Метод для получения списка записей
      * @param fileType расширение файла
      */
-    List<Record> getRecords(FileType fileType);
+    List<Record> getRecords(file.FileType fileType);
 
     /**
      * Метод для получения записи по индексу
      * @param index индекс записи
      * @param fileType расширение файла
      */
-    Record getRecord(int index, FileType fileType);
+    Record getRecord(int index, file.FileType fileType);
 
     /**
      * Метод, задающий смотрителя для контроллера

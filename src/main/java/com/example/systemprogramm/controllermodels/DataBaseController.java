@@ -1,8 +1,7 @@
 package com.example.systemprogramm.controllermodels;
 
 import com.example.systemprogramm.controllermodels.database.DAO;
-import com.example.systemprogramm.controllermodels.file.FileType;
-import com.example.systemprogramm.controllermodels.file.record.Record;
+import file.record.Record;
 import com.example.systemprogramm.viewmodels.View;
 
 import java.util.List;
@@ -54,16 +53,16 @@ public class DataBaseController implements Controller {
     }
 
     @Override
-    public List<Record> getRecords(FileType fileType) {
+    public List<Record> getRecords(file.FileType fileType) {
         return dao.findAll(fileType);
     }
 
     @Override
-    public Record getRecord(int index, FileType fileType) {
+    public Record getRecord(int index, file.FileType fileType) {
         return getRecords(fileType).get(index);
     }
 
-    public Record getRecord(String id, FileType fileType) {
+    public Record getRecord(String id, file.FileType fileType) {
         return dao.findByAddress(id, fileType);
     }
 

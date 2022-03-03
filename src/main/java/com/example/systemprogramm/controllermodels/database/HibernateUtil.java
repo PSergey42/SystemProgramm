@@ -1,9 +1,8 @@
 package com.example.systemprogramm.controllermodels.database;
 
-import com.example.systemprogramm.controllermodels.file.record.Record;
-import com.example.systemprogramm.controllermodels.file.record.RecordCSV;
-import com.example.systemprogramm.controllermodels.file.record.RecordJSON;
-import com.example.systemprogramm.controllermodels.file.record.RecordXML;
+import file.record.RecordCSV;
+import file.record.RecordJSON;
+import file.record.RecordXML;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;

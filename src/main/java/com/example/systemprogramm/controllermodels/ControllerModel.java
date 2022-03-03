@@ -1,9 +1,9 @@
 package com.example.systemprogramm.controllermodels;
 
-import com.example.systemprogramm.controllermodels.analyzer.Analyzer;
-import com.example.systemprogramm.controllermodels.file.FileType;
-import com.example.systemprogramm.controllermodels.file.FileUtils;
-import com.example.systemprogramm.controllermodels.file.record.Record;
+import analyzer.Analyzer;
+import file.*;
+import file.FileUtils;
+import file.record.Record;
 import com.example.systemprogramm.viewmodels.View;
 
 import java.io.File;
@@ -58,12 +58,12 @@ public class ControllerModel implements Controller {
     }
 
     @Override
-    public List<Record> getRecords(FileType fileType) {
+    public List<Record> getRecords(file.FileType fileType) {
         return fileUtils.getRecords();
     }
 
     @Override
-    public Record getRecord(int index, FileType fileType) {
+    public Record getRecord(int index, file.FileType fileType) {
         return fileUtils.getRecord(index);
     }
 
@@ -72,7 +72,7 @@ public class ControllerModel implements Controller {
      * @param saveFile файл, который надо сохранить
      * @param fileType тип файла
      */
-    public void save(File saveFile, FileType fileType) {
+    public void save(File saveFile, file.FileType fileType) {
         fileUtils.save(saveFile, fileType);
     }
 
@@ -81,7 +81,7 @@ public class ControllerModel implements Controller {
      * @param loadFile файл, который надо загрузить
      * @param fileType тип файла
      */
-    public void load(File loadFile, FileType fileType) {
+    public void load(File loadFile, file.FileType fileType) {
         fileUtils.load(loadFile, fileType);
         view.update();
     }

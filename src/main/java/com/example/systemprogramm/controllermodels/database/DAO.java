@@ -1,12 +1,11 @@
 package com.example.systemprogramm.controllermodels.database;
 
-import com.example.systemprogramm.controllermodels.file.FileType;
-import com.example.systemprogramm.controllermodels.file.record.RecordCSV;
-import com.example.systemprogramm.controllermodels.file.record.RecordJSON;
-import com.example.systemprogramm.controllermodels.file.record.RecordXML;
+import file.record.RecordCSV;
+import file.record.RecordJSON;
+import file.record.RecordXML;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import com.example.systemprogramm.controllermodels.file.record.Record;
+import file.record.Record;
 
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class DAO {
      * @param type тип файла
      * @return запись или null в случае провала поиска
      */
-    public Record findByAddress(String id, FileType type) {
+    public Record findByAddress(String id, file.FileType type) {
         switch (type) {
             case CSV -> {
                 return HibernateUtil.getSessionFactory().openSession().get(RecordCSV.class, id);
@@ -77,7 +76,7 @@ public class DAO {
      * @param type тип файла
      * @return список записей
      */
-    public List<Record> findAll(FileType type) {
+    public List<Record> findAll(file.FileType type) {
         switch (type) {
             case CSV -> {
                 return (List<Record>) HibernateUtil.getSessionFactory().openSession().createQuery("From RecordCSV").list();

@@ -1,8 +1,8 @@
 package com.example.systemprogramm.viewmodels.windows;
 
 import com.example.systemprogramm.controllermodels.Controller;
-import com.example.systemprogramm.controllermodels.file.record.Record;
-import com.example.systemprogramm.controllermodels.file.record.RecordCSV;
+import file.record.Record;
+import file.record.RecordCSV;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,13 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.w3c.dom.Text;
 
 import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.StringTokenizer;
 
 /**
  * Класс отвечающий за добавление новой записи
